@@ -2,7 +2,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -10,10 +10,12 @@ const Dashboard = () => {
     navigate('/login');
   };
 
+  const username = localStorage.getItem('username') || 'User';
+
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1>Welcome to MindFit, {user?.username}!</h1>
+        <h1>Welcome to MindFit, {String(username)}!</h1>
         <button 
           onClick={handleLogout}
           style={{ 

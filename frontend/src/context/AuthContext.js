@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('access_token');
     const username = localStorage.getItem('username');
     if (token && username) {
-      setUser({ username });
+      setUser(username);  // Just store the username string, not an object
     }
     setLoading(false);
   }, []);
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
       localStorage.setItem('username', username);
-      setUser({ username });
+      setUser(username);  // Just the username string
       return { success: true };
     } catch (error) {
       return { 
