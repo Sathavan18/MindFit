@@ -40,6 +40,21 @@ const Dashboard = () => {
           <li>View your progress graphs</li>
           <li>Get personalized article recommendations</li>
         </ul>
+
+          <button
+            onClick={() => navigate('/profile')}
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            View My Profile
+          </button>
       </div>
     </div>
   );

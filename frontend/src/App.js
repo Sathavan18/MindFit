@@ -4,6 +4,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import RegisterWithProfile from './pages/RegisterWithProfile';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -19,6 +20,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <PrivateRoute>
+                  <Profile />
                 </PrivateRoute>
               } 
             />
