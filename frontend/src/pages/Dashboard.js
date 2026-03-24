@@ -32,19 +32,20 @@ const Dashboard = () => {
       </div>
 
       <div style={{ maxWidth: '800px' }}>
-        <p>Your dashboard is coming soon! You'll be able to:</p>
+        <p>Track your health journey:</p>
         <ul>
           <li>Track your weight and calories</li>
+          <li>Log your mood and journal entries</li>
           <li>Log your mood and journal entries</li>
           <li>Use the meditation timer</li>
           <li>View your progress graphs</li>
           <li>Get personalized article recommendations</li>
         </ul>
-
+        
+        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
           <button
             onClick={() => navigate('/profile')}
             style={{
-              marginTop: '20px',
               padding: '10px 20px',
               backgroundColor: '#007bff',
               color: 'white',
@@ -55,6 +56,63 @@ const Dashboard = () => {
           >
             View My Profile
           </button>
+          
+          <button
+            onClick={() => navigate('/weight-tracking')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Track Weight
+          </button>
+
+          <button
+            onClick={() => navigate('/journal')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#6f42c1',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Journal
+          </button>
+
+          <button
+            onClick={() => navigate('/mood')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#17a2b8',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Mood Rating
+          </button>
+
+          <button
+            onClick={() => navigate('/meditation')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Meditation
+          </button>
+        </div>
       </div>
     </div>
   );

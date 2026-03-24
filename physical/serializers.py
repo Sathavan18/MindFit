@@ -5,3 +5,4 @@ class WeightEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = WeightEntry
         fields = '__all__'
+        read_only_fields = ['user', 'date']

@@ -5,6 +5,10 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import RegisterWithProfile from './pages/RegisterWithProfile';
 import Profile from './pages/Profile';
+import WeightTracking from './pages/WeightTracking';
+import Journal from './pages/Journal';
+import MoodRating from './pages/MoodRating';
+import Meditation from './pages/Meditation';
 import './App.css';
 
 function App() {
@@ -28,6 +32,38 @@ function App() {
               element={
                 <PrivateRoute>
                   <Profile />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/weight-tracking" 
+              element={
+                <PrivateRoute>
+                  <WeightTracking />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/journal" 
+              element={
+                <PrivateRoute>
+                  <Journal />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/mood" 
+              element={
+                <PrivateRoute>
+                  <MoodRating />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/meditation" 
+              element={
+                <PrivateRoute>
+                  <Meditation />
                 </PrivateRoute>
               } 
             />
