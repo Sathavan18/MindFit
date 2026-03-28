@@ -112,6 +112,21 @@ const Dashboard = () => {
           >
             Meditation
           </button>
+
+          <button
+            onClick={() => navigate('/articles')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#ffc107',
+              color: '#000',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            Health Resources
+          </button>
         </div>
       </div>
     </div>

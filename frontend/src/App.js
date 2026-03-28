@@ -9,6 +9,7 @@ import WeightTracking from './pages/WeightTracking';
 import Journal from './pages/Journal';
 import MoodRating from './pages/MoodRating';
 import Meditation from './pages/Meditation';
+import Articles from './pages/Articles';
 import './App.css';
 
 function App() {
@@ -64,6 +65,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Meditation />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/articles" 
+              element={
+                <PrivateRoute>
+                  <Articles />
                 </PrivateRoute>
               } 
             />
