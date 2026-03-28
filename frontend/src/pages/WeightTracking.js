@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 const WeightTracking = () => {
   const [entries, setEntries] = useState([]);
@@ -185,6 +186,81 @@ const WeightTracking = () => {
         </form>
       </div>
 
+      {/* Weight Progress Graph */}
+      {entries.length > 0 && (
+        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '30px' }}>
+          <h2>Weight Progress</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={[...entries].reverse()}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              />
+              <YAxis 
+                domain={['dataMin - 2', 'dataMax + 2']}
+                label={{ value: 'Weight (kg)', angle: -90, position: 'insideLeft' }}
+              />
+              <Tooltip 
+                labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                formatter={(value) => [`${value} kg`, 'Weight']}
+              />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="weight" 
+                stroke="#28a745" 
+                strokeWidth={2}
+                dot={{ fill: '#28a745', r: 4 }}
+                name="Weight"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+      {/* Calorie Adherence Graph */}
+      {entries.length > 0 && profile && (
+        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '30px' }}>
+          <h2>Calorie Adherence</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={[...entries].reverse()}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              />
+              <YAxis 
+                label={{ value: 'Calories', angle: -90, position: 'insideLeft' }}
+              />
+              <Tooltip 
+                labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                formatter={(value) => [`${value} cal`, 'Intake']}
+              />
+              <Legend />
+              <ReferenceLine 
+                y={profile.target_calories} 
+                stroke="#007bff" 
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                label={{ value: `Target: ${profile.target_calories}`, position: 'right', fill: '#007bff' }}
+              />
+              <Bar 
+                dataKey="calorie_intake" 
+                fill="#28a745"
+                name="Calorie Intake"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+          <div style={{ marginTop: '15px', fontSize: '14px', color: '#666' }}>
+            <p style={{ margin: '5px 0' }}>
+              <span style={{ color: '#007bff', fontWeight: 'bold' }}>Blue dashed line</span> = Your target ({profile.target_calories} cal/day)
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              Bars above the line = over target | Bars below the line = under target
+            </p>
+          </div>
+        </div>
+      )}
       {/* Weight History */}
       <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
         <h2>Weight History</h2>

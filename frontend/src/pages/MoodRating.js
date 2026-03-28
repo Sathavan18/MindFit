@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const MoodRating = () => {
   const [entries, setEntries] = useState([]);
@@ -240,6 +241,62 @@ const MoodRating = () => {
         </form>
       </div>
 
+      {/* Mood Trends Graph */}
+      {entries.length > 0 && (
+        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '30px' }}>
+          <h2>Mood Trends</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={[...entries].reverse()}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              />
+              <YAxis 
+                domain={[0, 10]}
+                label={{ value: 'Level', angle: -90, position: 'insideLeft' }}
+              />
+              <Tooltip 
+                labelFormatter={(date) => new Date(date).toLocaleDateString()}
+              />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="anxiety_level" 
+                stroke="#dc3545" 
+                strokeWidth={2}
+                dot={{ fill: '#dc3545', r: 4 }}
+                name="Anxiety"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="stress_level" 
+                stroke="#ffc107" 
+                strokeWidth={2}
+                dot={{ fill: '#ffc107', r: 4 }}
+                name="Stress"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="overall_mood" 
+                stroke="#28a745" 
+                strokeWidth={2}
+                dot={{ fill: '#28a745', r: 4 }}
+                name="Overall Mood"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+          <div style={{ marginTop: '15px', fontSize: '14px', color: '#666' }}>
+            <p style={{ margin: '5px 0' }}>
+              <span style={{ color: '#dc3545', fontWeight: 'bold' }}>Red (Anxiety)</span> & 
+              <span style={{ color: '#ffc107', fontWeight: 'bold' }}> Yellow (Stress)</span>: Lower is better
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              <span style={{ color: '#28a745', fontWeight: 'bold' }}>Green (Overall Mood)</span>: Higher is better (scale 1-5)
+            </p>
+          </div>
+        </div>
+      )}      
       {/* Past Ratings */}
       <div>
         <h2>Past Ratings ({entries.length})</h2>
