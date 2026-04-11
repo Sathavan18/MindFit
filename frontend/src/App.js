@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import RegisterWithProfile from './pages/RegisterWithProfile';
@@ -10,6 +11,7 @@ import Journal from './pages/Journal';
 import MoodRating from './pages/MoodRating';
 import Meditation from './pages/Meditation';
 import Articles from './pages/Articles';
+import Progress from './pages/Progress';
 import './App.css';
 
 function App() {
@@ -20,11 +22,16 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterWithProfile />} />
+            
+            {/* Protected Routes with Navbar */}
             <Route 
               path="/dashboard" 
               element={
                 <PrivateRoute>
-                  <Dashboard />
+                  <>
+                    <Navbar />
+                    <Dashboard />
+                  </>
                 </PrivateRoute>
               } 
             />
@@ -32,7 +39,10 @@ function App() {
               path="/profile" 
               element={
                 <PrivateRoute>
-                  <Profile />
+                  <>
+                    <Navbar />
+                    <Profile />
+                  </>
                 </PrivateRoute>
               } 
             />
@@ -40,15 +50,10 @@ function App() {
               path="/weight-tracking" 
               element={
                 <PrivateRoute>
-                  <WeightTracking />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/journal" 
-              element={
-                <PrivateRoute>
-                  <Journal />
+                  <>
+                    <Navbar />
+                    <WeightTracking />
+                  </>
                 </PrivateRoute>
               } 
             />
@@ -56,7 +61,21 @@ function App() {
               path="/mood" 
               element={
                 <PrivateRoute>
-                  <MoodRating />
+                  <>
+                    <Navbar />
+                    <MoodRating />
+                  </>
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/journal" 
+              element={
+                <PrivateRoute>
+                  <>
+                    <Navbar />
+                    <Journal />
+                  </>
                 </PrivateRoute>
               } 
             />
@@ -64,7 +83,10 @@ function App() {
               path="/meditation" 
               element={
                 <PrivateRoute>
-                  <Meditation />
+                  <>
+                    <Navbar />
+                    <Meditation />
+                  </>
                 </PrivateRoute>
               } 
             />
@@ -72,10 +94,25 @@ function App() {
               path="/articles" 
               element={
                 <PrivateRoute>
-                  <Articles />
+                  <>
+                    <Navbar />
+                    <Articles />
+                  </>
                 </PrivateRoute>
               } 
             />
+            <Route 
+              path="/progress" 
+              element={
+                <PrivateRoute>
+                  <>
+                    <Navbar />
+                    <Progress />
+                  </>
+                </PrivateRoute>
+              } 
+            />
+            
             <Route path="/" element={<Navigate to="/login" />} />
           </Routes>
         </div>
