@@ -1,54 +1,98 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const username = localStorage.getItem('username') || 'User';
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+  const features = [
+    {
+      id: 'profile',
+      title: 'Profile',
+      description: 'Manage your health profile, BMR calculations, and calorie targets',
+      path: '/profile',
+      image: '/images/dashboard/profile.jpg',
+    },
+    {
+      id: 'weight',
+      title: 'Weight Tracking',
+      description: 'Monitor your weight progress and daily calorie intake',
+      path: '/weight-tracking',
+      image: '/images/dashboard/weight.jpg',
+    },
+    {
+      id: 'mood',
+      title: 'Mood Rating',
+      description: 'Track anxiety, stress levels, and overall mental wellbeing',
+      path: '/mood',
+      image: '/images/dashboard/mood.jpg',
+    },
+    {
+      id: 'journal',
+      title: 'Journal',
+      description: 'Document your daily thoughts and reflections',
+      path: '/journal',
+      image: '/images/dashboard/journal.jpg',
+    },
+    {
+      id: 'meditation',
+      title: 'Meditation',
+      description: 'Practice mindfulness and build your meditation streak',
+      path: '/meditation',
+      image: '/images/dashboard/meditation.jpg',
+    },
+    {
+      id: 'articles',
+      title: 'Health Resources',
+      description: 'Access personalized wellness articles and recommendations',
+      path: '/articles',
+      image: '/images/dashboard/articles.jpg',
+    },
+    {
+      id: 'progress',
+      title: 'Progress',
+      description: 'View your activity streaks and achievements',
+      path: '/progress',
+      image: '/images/dashboard/progress.jpg',
+    },
+  ];
 
   return (
     <div className="page-container">
-      <h1 className="mb-30">Welcome to MindFit, {String(username)}!</h1>
-
-      <div className="card mb-30">
-        <h2>Track Your Health Journey</h2>
-        <p>MindFit helps you monitor both physical and mental wellness:</p>
-        <ul style={{ marginLeft: '20px', lineHeight: '1.8' }}>
-          <li>Track your weight and calories</li>
-          <li>Log your mood and journal entries</li>
-          <li>Use the meditation timer</li>
-          <li>View your progress graphs</li>
-          <li>Get personalized article recommendations</li>
-        </ul>
+      <div className="dashboard-header">
+        <h1>Welcome back, {String(username)}</h1>
+        <p className="dashboard-subtitle">Choose a feature to continue your wellness journey</p>
       </div>
 
-      <h2 className="mb-15">Quick Access</h2>
-      <div className="grid-auto">
-        <button onClick={() => navigate('/profile')} className="btn btn-primary">
-          👤 View My Profile
-        </button>
-        
-        <button onClick={() => navigate('/weight-tracking')} className="btn btn-success">
-          ⚖️ Track Weight
-        </button>
-        
-        <button onClick={() => navigate('/journal')} className="btn btn-purple">
-          📝 Journal
-        </button>
-        
-        <button onClick={() => navigate('/mood')} className="btn btn-info">
-          😊 Mood Rating
-        </button>
-        
-        <button onClick={() => navigate('/meditation')} className="btn btn-success">
-          🧘 Meditation
-        </button>
-        
-        <button onClick={() => navigate('/articles')} className="btn btn-warning">
-          📚 Health Resources
-        </button>
-        
-        <button onClick={() => navigate('/progress')} className="btn btn-success">
-          📊 View Progress & Streaks
-        </button>
+      <div className="dashboard-grid">
+        {features.map((feature) => (
+          <div
+            key={feature.id}
+            className="feature-card"
+            onClick={() => navigate(feature.path)}
+            onMouseEnter={() => setHoveredCard(feature.id)}
+            onMouseLeave={() => setHoveredCard(null)}
+          >
+            <div 
+              className="feature-card-background"
+              style={{
+                backgroundImage: `url(${feature.image})`,
+                filter: hoveredCard === feature.id ? 'blur(8px) brightness(0.4)' : 'blur(0px) brightness(0.6)',
+              }}
+            />
+            
+            <div className="feature-card-content">
+              <h3 className="feature-title">{feature.title}</h3>
+              
+              {hoveredCard === feature.id && (
+                <p className="feature-description fade-up">
+                  {feature.description}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
