@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const Progress = () => {
@@ -11,8 +10,6 @@ const Progress = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAllData();
@@ -82,8 +79,10 @@ const Progress = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Loading progress...</p>
+      <div className="page-container">
+        <div className="text-center">
+          <p className="text-muted">Loading progress...</p>
+        </div>
       </div>
     );
   }
@@ -98,126 +97,79 @@ const Progress = () => {
   const totalMeditationDays = calculateTotalDays(stats.meditationSessions);
   const totalJournalDays = calculateTotalDays(stats.journalEntries);
 
-  return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '30px' }}>Your Progress</h1>
+  const totalEntries = stats.weightEntries.length + stats.moodRatings.length + 
+                       stats.meditationSessions.length + stats.journalEntries.length;
+  
+  const activeDays = new Set([
+    ...stats.weightEntries.map(e => e.date),
+    ...stats.moodRatings.map(e => e.date),
+    ...stats.meditationSessions.map(e => e.date),
+    ...stats.journalEntries.map(e => e.date),
+  ]).size;
 
-      {error && (
-        <div style={{ padding: '10px', marginBottom: '15px', backgroundColor: '#ffe6e6', color: 'red', borderRadius: '4px' }}>
-          {error}
-        </div>
-      )}
+  return (
+    <div className="page-container">
+      <h1 className="mb-40">Your Progress</h1>
+
+      {error && <div className="alert alert-error">{error}</div>}
 
       {/* Overall Stats */}
-      <div style={{ marginBottom: '40px' }}>
+      <div className="progress-section">
         <h2>Overall Activity</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '20px', 
-            borderRadius: '8px', 
-            border: '1px solid #ddd',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>
-              {stats.weightEntries.length + stats.moodRatings.length + stats.meditationSessions.length + stats.journalEntries.length}
-            </div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#666' }}>Total Entries</div>
+        <div className="progress-overall-stats">
+          <div className="progress-stat-card">
+            <div className="progress-stat-number">{totalEntries}</div>
+            <div className="progress-stat-label">Total Entries</div>
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '20px', 
-            borderRadius: '8px', 
-            border: '1px solid #ddd',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>
-              {new Set([
-                ...stats.weightEntries.map(e => e.date),
-                ...stats.moodRatings.map(e => e.date),
-                ...stats.meditationSessions.map(e => e.date),
-                ...stats.journalEntries.map(e => e.date),
-              ]).size}
-            </div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#666' }}>Active Days</div>
+          <div className="progress-stat-card">
+            <div className="progress-stat-number">{activeDays}</div>
+            <div className="progress-stat-label">Active Days</div>
           </div>
         </div>
       </div>
 
-      {/* Streaks Section */}
-      <div style={{ marginBottom: '40px' }}>
+      {/* Current Streaks */}
+      <div className="progress-section">
         <h2>Current Streaks 🔥</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+        <div className="progress-streaks-grid">
           
           {/* Weight Tracking Streak */}
-          <div style={{ 
-            backgroundColor: weightStreak >= 3 ? '#d4edda' : 'white',
-            padding: '20px', 
-            borderRadius: '8px', 
-            border: `2px solid ${weightStreak >= 3 ? '#28a745' : '#ddd'}`
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>
-              {getStreakIcon(weightStreak)} {weightStreak}
-            </div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px' }}>
-              Weight Tracking
-            </div>
-            <div style={{ fontSize: '14px', color: '#666' }}>
+          <div className={`progress-streak-card ${weightStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
+            <span className="progress-streak-icon">{getStreakIcon(weightStreak)}</span>
+            <div className="progress-streak-number">{weightStreak}</div>
+            <div className="progress-streak-title">Weight Tracking</div>
+            <div className="progress-streak-subtitle">
               {weightStreak === 0 ? 'Start today!' : `${weightStreak} day${weightStreak === 1 ? '' : 's'} in a row`}
             </div>
           </div>
 
           {/* Mood Rating Streak */}
-          <div style={{ 
-            backgroundColor: moodStreak >= 3 ? '#d4edda' : 'white',
-            padding: '20px', 
-            borderRadius: '8px', 
-            border: `2px solid ${moodStreak >= 3 ? '#28a745' : '#ddd'}`
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>
-              {getStreakIcon(moodStreak)} {moodStreak}
-            </div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px' }}>
-              Mood Tracking
-            </div>
-            <div style={{ fontSize: '14px', color: '#666' }}>
+          <div className={`progress-streak-card ${moodStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
+            <span className="progress-streak-icon">{getStreakIcon(moodStreak)}</span>
+            <div className="progress-streak-number">{moodStreak}</div>
+            <div className="progress-streak-title">Mood Tracking</div>
+            <div className="progress-streak-subtitle">
               {moodStreak === 0 ? 'Start today!' : `${moodStreak} day${moodStreak === 1 ? '' : 's'} in a row`}
             </div>
           </div>
 
           {/* Meditation Streak */}
-          <div style={{ 
-            backgroundColor: meditationStreak >= 3 ? '#d4edda' : 'white',
-            padding: '20px', 
-            borderRadius: '8px', 
-            border: `2px solid ${meditationStreak >= 3 ? '#28a745' : '#ddd'}`
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>
-              {getStreakIcon(meditationStreak)} {meditationStreak}
-            </div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px' }}>
-              Meditation
-            </div>
-            <div style={{ fontSize: '14px', color: '#666' }}>
+          <div className={`progress-streak-card ${meditationStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
+            <span className="progress-streak-icon">{getStreakIcon(meditationStreak)}</span>
+            <div className="progress-streak-number">{meditationStreak}</div>
+            <div className="progress-streak-title">Meditation</div>
+            <div className="progress-streak-subtitle">
               {meditationStreak === 0 ? 'Start today!' : `${meditationStreak} day${meditationStreak === 1 ? '' : 's'} in a row`}
             </div>
           </div>
 
           {/* Journal Streak */}
-          <div style={{ 
-            backgroundColor: journalStreak >= 3 ? '#d4edda' : 'white',
-            padding: '20px', 
-            borderRadius: '8px', 
-            border: `2px solid ${journalStreak >= 3 ? '#28a745' : '#ddd'}`
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>
-              {getStreakIcon(journalStreak)} {journalStreak}
-            </div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px' }}>
-              Journaling
-            </div>
-            <div style={{ fontSize: '14px', color: '#666' }}>
+          <div className={`progress-streak-card ${journalStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
+            <span className="progress-streak-icon">{getStreakIcon(journalStreak)}</span>
+            <div className="progress-streak-number">{journalStreak}</div>
+            <div className="progress-streak-title">Journaling</div>
+            <div className="progress-streak-subtitle">
               {journalStreak === 0 ? 'Start today!' : `${journalStreak} day${journalStreak === 1 ? '' : 's'} in a row`}
             </div>
           </div>
@@ -225,37 +177,37 @@ const Progress = () => {
         </div>
       </div>
 
-      {/* Total Activity Section */}
-      <div>
+      {/* All-Time Activity */}
+      <div className="progress-section">
         <h2>All-Time Activity</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+        <div className="progress-activity-grid">
           
-          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
-            <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#28a745', marginBottom: '10px' }}>
+          <div className="progress-activity-card">
+            <div className="progress-activity-number" style={{ color: 'var(--success)' }}>
               {totalWeightDays}
             </div>
-            <div style={{ fontSize: '16px', color: '#666' }}>Days Tracked Weight</div>
+            <div className="progress-activity-label">Days Tracked Weight</div>
           </div>
 
-          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
-            <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#17a2b8', marginBottom: '10px' }}>
+          <div className="progress-activity-card">
+            <div className="progress-activity-number" style={{ color: 'var(--info)' }}>
               {totalMoodDays}
             </div>
-            <div style={{ fontSize: '16px', color: '#666' }}>Days Rated Mood</div>
+            <div className="progress-activity-label">Days Rated Mood</div>
           </div>
 
-          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
-            <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#6f42c1', marginBottom: '10px' }}>
+          <div className="progress-activity-card">
+            <div className="progress-activity-number" style={{ color: 'var(--purple)' }}>
               {totalMeditationDays}
             </div>
-            <div style={{ fontSize: '16px', color: '#666' }}>Days Meditated</div>
+            <div className="progress-activity-label">Days Meditated</div>
           </div>
 
-          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
-            <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#ffc107', marginBottom: '10px' }}>
+          <div className="progress-activity-card">
+            <div className="progress-activity-number" style={{ color: 'var(--warning)' }}>
               {totalJournalDays}
             </div>
-            <div style={{ fontSize: '16px', color: '#666' }}>Days Journaled</div>
+            <div className="progress-activity-label">Days Journaled</div>
           </div>
 
         </div>
