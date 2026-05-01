@@ -581,6 +581,142 @@ p {
   }
 }
 
+/* ==================== NAVBAR ==================== */
+
+.navbar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+}
+
+.navbar-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.navbar-logo:hover {
+  color: var(--primary);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.navbar-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.navbar-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.navbar-link-active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.navbar-link-active:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.navbar-icon {
+  font-size: 16px;
+}
+
+.navbar-label {
+  font-size: 14px;
+}
+
+.navbar-logout {
+  margin-left: 12px;
+  padding: 8px 20px;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.navbar-logout:hover {
+  background: #ff2d20;
+  transform: translateY(-1px);
+}
+
+/* Responsive Navbar */
+@media (max-width: 1024px) {
+  .navbar-label {
+    display: none;
+  }
+
+  .navbar-link {
+    padding: 8px 12px;
+  }
+  
+  .navbar-icon {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 16px;
+  }
+
+  .navbar-logo {
+    font-size: 20px;
+  }
+
+  .navbar-links {
+    gap: 4px;
+  }
+
+  .navbar-link {
+    padding: 6px 8px;
+  }
+
+  .navbar-logout {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
 /* ==================== DASHBOARD ==================== */
 
 .dashboard-header {
