@@ -242,7 +242,7 @@ p {
   padding: 13px 15px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--bg-secondary);
   font-size: 15px;
   color: var(--text);
   transition: all 0.2s ease;
@@ -260,7 +260,7 @@ p {
   padding: 13px 15px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--bg-secondary);
   font-size: 15px;
   font-family: inherit;
   color: var(--text);
@@ -280,7 +280,7 @@ p {
   padding: 13px 15px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--bg-secondary);
   font-size: 15px;
   color: var(--text);
   cursor: pointer;
@@ -953,6 +953,124 @@ p {
 .progress-activity-label {
   font-size: 15px;
   color: var(--muted);
+}
+
+/* ==================== WEIGHT TRACKING PAGE ==================== */
+
+.weight-target-banner {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  padding: 20px 24px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.3);
+}
+
+.weight-target-banner p {
+  margin: 0;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.weight-form-card {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.weight-form-card h2 {
+  margin-bottom: 24px;
+}
+
+.weight-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.weight-graph-card {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.weight-graph-card h2 {
+  margin-bottom: 24px;
+}
+
+.weight-history-card {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.weight-history-card h2 {
+  margin-bottom: 24px;
+}
+
+.weight-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+}
+
+.weight-change-indicator {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.weight-change-down {
+  color: var(--success);
+}
+
+.weight-change-up {
+  color: var(--danger);
+}
+
+.weight-change-same {
+  color: var(--muted);
+}
+
+.calorie-diff-positive {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.calorie-diff-negative {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.calorie-diff-zero {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .weight-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.recharts-bar-rectangle:hover {
+  transform: scaleY(1.08) !important;
+  transform-origin: bottom !important;
+  transition: transform 0.2s ease !important;
+}
+
+.recharts-bar-rectangle {
+  transition: transform 0.2s ease !important;
+  transform-origin: bottom !important;
 }
 
 /* ==================== DASHBOARD ==================== */
