@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const Journal = () => {
@@ -12,8 +11,6 @@ const Journal = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [expandedEntry, setExpandedEntry] = useState(null);
-  
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEntries();
@@ -64,86 +61,46 @@ const Journal = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Loading...</p>
+      <div className="page-container">
+        <div className="text-center">
+          <p className="text-muted">Loading journal entries...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>Journal</h1>
-        <button
-          onClick={() => navigate('/dashboard')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Back to Dashboard
-        </button>
-      </div>
+    <div className="page-container">
+      <h1 className="mb-40">Journal</h1>
 
-      {error && (
-        <div style={{ padding: '10px', marginBottom: '15px', backgroundColor: '#ffe6e6', color: 'red', borderRadius: '4px' }}>
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div style={{ padding: '10px', marginBottom: '15px', backgroundColor: '#d4edda', color: '#155724', borderRadius: '4px' }}>
-          {success}
-        </div>
-      )}
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       {/* New Entry Form */}
-      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '30px' }}>
+      <div className="journal-form-card">
         <h2>Write New Entry</h2>
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              How are you feeling today?
-            </label>
+          <div className="form-group">
+            <label className="form-label">How are you feeling today?</label>
             <textarea
               name="content"
               value={formData.content}
               onChange={handleChange}
               required
               placeholder="Write your thoughts here..."
-              rows="6"
-              style={{ 
-                width: '100%', 
-                padding: '10px', 
-                borderRadius: '4px', 
-                border: '1px solid #ddd',
-                fontFamily: 'inherit',
-                resize: 'vertical'
-              }}
+              rows="8"
+              maxLength="2000"
+              className="form-textarea"
             />
-            <small style={{ color: '#666' }}>
+            <div className="journal-char-counter">
               {formData.content.length}/2000 characters
-            </small>
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#6f42c1',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: submitting ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
-              fontWeight: 'bold',
-            }}
+            className="btn btn-purple btn-full-width btn-large"
           >
             {submitting ? 'Saving...' : 'Save Entry'}
           </button>
@@ -151,63 +108,64 @@ const Journal = () => {
       </div>
 
       {/* Past Entries */}
-      <div>
+      <div className="journal-entries-card">
         <h2>Past Entries ({entries.length})</h2>
         
         {entries.length === 0 ? (
-          <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '8px', border: '1px solid #ddd', textAlign: 'center' }}>
-            <p style={{ color: '#666', margin: 0 }}>
-              No journal entries yet. Start writing above!
-            </p>
+          <div className="journal-empty-state">
+            <p>No journal entries yet. Start writing above!</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: '15px' }}>
-            {entries.map((entry) => (
-              <div 
-                key={entry.id} 
-                style={{ 
-                  backgroundColor: 'white', 
-                  padding: '20px', 
-                  borderRadius: '8px', 
-                  border: '1px solid #ddd',
-                  cursor: 'pointer',
-                  transition: 'box-shadow 0.2s'
-                }}
-                onClick={() => toggleExpand(entry.id)}
-                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'}
-                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <span style={{ fontWeight: 'bold', color: '#6f42c1' }}>
-                    {new Date(entry.date).toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                  </span>
-                  <span style={{ fontSize: '12px', color: '#666' }}>
-                    {entry.content.length} characters
-                  </span>
-                </div>
-                
-                <div style={{ 
-                  color: '#333',
-                  lineHeight: '1.6',
-                  whiteSpace: expandedEntry === entry.id ? 'pre-wrap' : 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}>
-                  {expandedEntry === entry.id ? entry.content : entry.content.substring(0, 150) + (entry.content.length > 150 ? '...' : '')}
-                </div>
-                
-                {entry.content.length > 150 && (
-                  <div style={{ marginTop: '10px', color: '#6f42c1', fontSize: '14px', fontWeight: 'bold' }}>
-                    {expandedEntry === entry.id ? 'Click to collapse' : 'Click to read more'}
+          <div className="journal-entries-grid">
+            {entries.map((entry) => {
+              const isExpanded = expandedEntry === entry.id;
+              const preview = entry.content.split('\n')[0]; // Get first line
+              const previewText = preview.length > 100 ? preview.substring(0, 100) + '...' : preview;
+              
+              return (
+                <div 
+                  key={entry.id} 
+                  className="journal-entry-item"
+                  onClick={() => toggleExpand(entry.id)}
+                >
+                  <div className="journal-entry-header">
+                    <span className="journal-entry-date">
+                      {new Date(entry.date).toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                      })}
+                    </span>
+                    <span className="journal-entry-length">
+                      {entry.content.length} characters
+                    </span>
                   </div>
-                )}
-              </div>
-            ))}
+                  
+                  {!isExpanded ? (
+                    // Collapsed view - show preview
+                    <>
+                      <div className="journal-entry-preview">
+                        {previewText}
+                      </div>
+                      <div className="journal-entry-expand-hint">
+                        Click to read more
+                      </div>
+                    </>
+                  ) : (
+                    // Expanded view - show full content
+                    <>
+                      <div className="journal-entry-content">
+                        {entry.content}
+                      </div>
+                      <div className="journal-entry-expand-hint">
+                        Click to collapse
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
