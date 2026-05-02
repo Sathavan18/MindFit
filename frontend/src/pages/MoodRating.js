@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -14,8 +13,6 @@ const MoodRating = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEntries();
@@ -58,113 +55,74 @@ const MoodRating = () => {
 
   const getAnxietyLabel = (level) => {
     const labels = {
-      1: 'Not Anxious At All',
-      2: 'Not Anxious',
-      3: 'Slightly Anxious',
-      4: 'Somewhat Anxious',
-      5: 'Anxious',
-      6: 'Moderately Anxious',
-      7: 'Quite Anxious',
-      8: 'Very Anxious',
-      9: 'Super Anxious',
-      10: 'Extremely Anxious',
+      1: 'Not Anxious At All', 2: 'Not Anxious', 3: 'Slightly Anxious',
+      4: 'Somewhat Anxious', 5: 'Anxious', 6: 'Moderately Anxious',
+      7: 'Quite Anxious', 8: 'Very Anxious', 9: 'Super Anxious', 10: 'Extremely Anxious',
     };
     return labels[level];
   };
 
   const getStressLabel = (level) => {
     const labels = {
-      1: 'Not Stressed At All',
-      2: 'Not Stressed',
-      3: 'Slightly Stressed',
-      4: 'Somewhat Stressed',
-      5: 'Stressed',
-      6: 'Moderately Stressed',
-      7: 'Quite Stressed',
-      8: 'Very Stressed',
-      9: 'Super Stressed',
-      10: 'Extremely Stressed',
+      1: 'Not Stressed At All', 2: 'Not Stressed', 3: 'Slightly Stressed',
+      4: 'Somewhat Stressed', 5: 'Stressed', 6: 'Moderately Stressed',
+      7: 'Quite Stressed', 8: 'Very Stressed', 9: 'Super Stressed', 10: 'Extremely Stressed',
     };
     return labels[level];
   };
 
   const getMoodLabel = (level) => {
-    const labels = {
-      1: 'Poor',
-      2: 'Somewhat Poor',
-      3: 'Okay',
-      4: 'Somewhat Happy',
-      5: 'Happy',
-    };
+    const labels = { 1: 'Poor', 2: 'Somewhat Poor', 3: 'Okay', 4: 'Somewhat Happy', 5: 'Happy' };
     return labels[level];
   };
 
   const getAnxietyColor = (level) => {
-    if (level <= 3) return '#28a745';
-    if (level <= 6) return '#ffc107';
-    return '#dc3545';
+    if (level <= 3) return 'var(--success)';
+    if (level <= 6) return 'var(--warning)';
+    return 'var(--danger)';
   };
 
   const getStressColor = (level) => {
-    if (level <= 3) return '#28a745';
-    if (level <= 6) return '#ffc107';
-    return '#dc3545';
+    if (level <= 3) return 'var(--success)';
+    if (level <= 6) return 'var(--warning)';
+    return 'var(--danger)';
   };
 
   const getMoodColor = (level) => {
-    if (level >= 4) return '#28a745';
-    if (level >= 3) return '#ffc107';
-    return '#dc3545';
+    if (level >= 4) return 'var(--success)';
+    if (level >= 3) return 'var(--warning)';
+    return 'var(--danger)';
   };
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Loading...</p>
+      <div className="page-container">
+        <div className="text-center">
+          <p className="text-muted">Loading mood ratings...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>Mood Rating</h1>
-        <button
-          onClick={() => navigate('/dashboard')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Back to Dashboard
-        </button>
-      </div>
+    <div className="page-container">
+      <h1 className="mb-40">Mood Rating</h1>
 
-      {error && (
-        <div style={{ padding: '10px', marginBottom: '15px', backgroundColor: '#ffe6e6', color: 'red', borderRadius: '4px' }}>
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div style={{ padding: '10px', marginBottom: '15px', backgroundColor: '#d4edda', color: '#155724', borderRadius: '4px' }}>
-          {success}
-        </div>
-      )}
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       {/* Rating Form */}
-      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '30px' }}>
+      <div className="mood-form-card">
         <h2>How are you feeling today?</h2>
         <form onSubmit={handleSubmit}>
           
           {/* Anxiety Level */}
-          <div style={{ marginBottom: '30px' }}>
-            <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', fontSize: '16px' }}>
-              Anxiety Level: <span style={{ color: getAnxietyColor(formData.anxiety_level) }}>{getAnxietyLabel(formData.anxiety_level)}</span>
+          <div className="mood-slider-group">
+            <label className="mood-slider-label">
+              Anxiety Level:
+              <span className="mood-slider-value" style={{ color: getAnxietyColor(formData.anxiety_level) }}>
+                {getAnxietyLabel(formData.anxiety_level)}
+              </span>
             </label>
             <input
               type="range"
@@ -173,18 +131,21 @@ const MoodRating = () => {
               max="10"
               value={formData.anxiety_level}
               onChange={handleChange}
-              style={{ width: '100%', height: '8px', cursor: 'pointer' }}
+              className="mood-slider"
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#666', marginTop: '5px' }}>
+            <div className="mood-slider-range">
               <span>1 (Not Anxious)</span>
               <span>10 (Extremely Anxious)</span>
             </div>
           </div>
 
           {/* Stress Level */}
-          <div style={{ marginBottom: '30px' }}>
-            <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', fontSize: '16px' }}>
-              Stress Level: <span style={{ color: getStressColor(formData.stress_level) }}>{getStressLabel(formData.stress_level)}</span>
+          <div className="mood-slider-group">
+            <label className="mood-slider-label">
+              Stress Level:
+              <span className="mood-slider-value" style={{ color: getStressColor(formData.stress_level) }}>
+                {getStressLabel(formData.stress_level)}
+              </span>
             </label>
             <input
               type="range"
@@ -193,18 +154,21 @@ const MoodRating = () => {
               max="10"
               value={formData.stress_level}
               onChange={handleChange}
-              style={{ width: '100%', height: '8px', cursor: 'pointer' }}
+              className="mood-slider"
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#666', marginTop: '5px' }}>
+            <div className="mood-slider-range">
               <span>1 (Not Stressed)</span>
               <span>10 (Extremely Stressed)</span>
             </div>
           </div>
 
           {/* Overall Mood */}
-          <div style={{ marginBottom: '30px' }}>
-            <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', fontSize: '16px' }}>
-              Overall Mood: <span style={{ color: getMoodColor(formData.overall_mood) }}>{getMoodLabel(formData.overall_mood)}</span>
+          <div className="mood-slider-group">
+            <label className="mood-slider-label">
+              Overall Mood:
+              <span className="mood-slider-value" style={{ color: getMoodColor(formData.overall_mood) }}>
+                {getMoodLabel(formData.overall_mood)}
+              </span>
             </label>
             <input
               type="range"
@@ -213,9 +177,9 @@ const MoodRating = () => {
               max="5"
               value={formData.overall_mood}
               onChange={handleChange}
-              style={{ width: '100%', height: '8px', cursor: 'pointer' }}
+              className="mood-slider"
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#666', marginTop: '5px' }}>
+            <div className="mood-slider-range">
               <span>1 (Poor)</span>
               <span>5 (Happy)</span>
             </div>
@@ -224,17 +188,7 @@ const MoodRating = () => {
           <button
             type="submit"
             disabled={submitting}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#17a2b8',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: submitting ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
-              fontWeight: 'bold',
-            }}
+            className="btn btn-info btn-full-width btn-large"
           >
             {submitting ? 'Saving...' : 'Save Mood Rating'}
           </button>
@@ -243,83 +197,72 @@ const MoodRating = () => {
 
       {/* Mood Trends Graph */}
       {entries.length > 0 && (
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '30px' }}>
+        <div className="mood-graph-card">
           <h2>Mood Trends</h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={[...entries].reverse()}>
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis 
                 dataKey="date" 
                 tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                stroke="var(--text-secondary)"
               />
               <YAxis 
                 domain={[0, 10]}
-                label={{ value: 'Level', angle: -90, position: 'insideLeft' }}
+                label={{ value: 'Level', angle: -90, position: 'insideLeft', fill: 'var(--text-secondary)' }}
+                stroke="var(--text-secondary)"
               />
               <Tooltip 
                 labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px' }}
               />
               <Legend />
               <Line 
                 type="monotone" 
                 dataKey="anxiety_level" 
-                stroke="#dc3545" 
-                strokeWidth={2}
-                dot={{ fill: '#dc3545', r: 4 }}
+                stroke="#ff3b30" 
+                strokeWidth={3}
+                dot={{ fill: '#ff3b30', r: 5 }}
                 name="Anxiety"
               />
               <Line 
                 type="monotone" 
                 dataKey="stress_level" 
-                stroke="#ffc107" 
-                strokeWidth={2}
-                dot={{ fill: '#ffc107', r: 4 }}
+                stroke="#ff9500" 
+                strokeWidth={3}
+                dot={{ fill: '#ff9500', r: 5 }}
                 name="Stress"
               />
               <Line 
                 type="monotone" 
                 dataKey="overall_mood" 
-                stroke="#28a745" 
-                strokeWidth={2}
-                dot={{ fill: '#28a745', r: 4 }}
+                stroke="#34c759" 
+                strokeWidth={3}
+                dot={{ fill: '#34c759', r: 5 }}
                 name="Overall Mood"
               />
             </LineChart>
           </ResponsiveContainer>
-          <div style={{ marginTop: '15px', fontSize: '14px', color: '#666' }}>
-            <p style={{ margin: '5px 0' }}>
-              <span style={{ color: '#dc3545', fontWeight: 'bold' }}>Red (Anxiety)</span> & 
-              <span style={{ color: '#ffc107', fontWeight: 'bold' }}> Yellow (Stress)</span>: Lower is better
-            </p>
-            <p style={{ margin: '5px 0' }}>
-              <span style={{ color: '#28a745', fontWeight: 'bold' }}>Green (Overall Mood)</span>: Higher is better (scale 1-5)
-            </p>
+          <div className="mood-legend">
+            <p><span style={{ color: '#ff3b30', fontWeight: 'bold' }}>Red (Anxiety)</span> & <span style={{ color: '#ff9500', fontWeight: 'bold' }}>Orange (Stress)</span>: Lower is better</p>
+            <p><span style={{ color: '#34c759', fontWeight: 'bold' }}>Green (Overall Mood)</span>: Higher is better (scale 1-5)</p>
           </div>
         </div>
-      )}      
+      )}
+
       {/* Past Ratings */}
-      <div>
+      <div className="mood-history-card">
         <h2>Past Ratings ({entries.length})</h2>
         
         {entries.length === 0 ? (
-          <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '8px', border: '1px solid #ddd', textAlign: 'center' }}>
-            <p style={{ color: '#666', margin: 0 }}>
-              No mood ratings yet. Log your first rating above!
-            </p>
+          <div className="mood-empty-state">
+            <p>No mood ratings yet. Log your first rating above!</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: '15px' }}>
+          <div className="mood-history-grid">
             {entries.map((entry) => (
-              <div 
-                key={entry.id} 
-                style={{ 
-                  backgroundColor: 'white', 
-                  padding: '20px', 
-                  borderRadius: '8px', 
-                  border: '1px solid #ddd'
-                }}
-              >
-                <div style={{ fontWeight: 'bold', color: '#17a2b8', marginBottom: '15px' }}>
+              <div key={entry.id} className="mood-history-item">
+                <div className="mood-history-date">
                   {new Date(entry.date).toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -328,24 +271,24 @@ const MoodRating = () => {
                   })}
                 </div>
                 
-                <div style={{ display: 'grid', gap: '10px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span><strong>Anxiety:</strong></span>
-                    <span style={{ color: getAnxietyColor(entry.anxiety_level), fontWeight: 'bold' }}>
+                <div className="mood-history-details">
+                  <div className="mood-history-row">
+                    <span className="mood-history-label">Anxiety:</span>
+                    <span className="mood-history-value" style={{ color: getAnxietyColor(entry.anxiety_level) }}>
                       {entry.anxiety_level}/10 - {getAnxietyLabel(entry.anxiety_level)}
                     </span>
                   </div>
                   
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span><strong>Stress:</strong></span>
-                    <span style={{ color: getStressColor(entry.stress_level), fontWeight: 'bold' }}>
+                  <div className="mood-history-row">
+                    <span className="mood-history-label">Stress:</span>
+                    <span className="mood-history-value" style={{ color: getStressColor(entry.stress_level) }}>
                       {entry.stress_level}/10 - {getStressLabel(entry.stress_level)}
                     </span>
                   </div>
                   
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span><strong>Overall Mood:</strong></span>
-                    <span style={{ color: getMoodColor(entry.overall_mood), fontWeight: 'bold' }}>
+                  <div className="mood-history-row">
+                    <span className="mood-history-label">Overall Mood:</span>
+                    <span className="mood-history-value" style={{ color: getMoodColor(entry.overall_mood) }}>
                       {entry.overall_mood}/5 - {getMoodLabel(entry.overall_mood)}
                     </span>
                   </div>

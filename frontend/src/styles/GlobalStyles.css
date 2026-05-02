@@ -1073,6 +1073,182 @@ p {
   transform-origin: bottom !important;
 }
 
+/* ==================== MOOD RATING PAGE ==================== */
+
+.mood-form-card {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.mood-form-card h2 {
+  margin-bottom: 28px;
+}
+
+.mood-slider-group {
+  margin-bottom: 32px;
+}
+
+.mood-slider-label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.mood-slider-value {
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.mood-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.mood-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.4);
+  transition: all 0.2s ease;
+}
+
+.mood-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.6);
+}
+
+.mood-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.4);
+  transition: all 0.2s ease;
+}
+
+.mood-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.6);
+}
+
+.mood-slider-range {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.mood-graph-card {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.mood-graph-card h2 {
+  margin-bottom: 20px;
+}
+
+.mood-legend {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.mood-legend p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.mood-history-card {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.mood-history-card h2 {
+  margin-bottom: 24px;
+}
+
+.mood-history-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.mood-history-item {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.mood-history-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--primary);
+}
+
+.mood-history-date {
+  font-weight: 600;
+  color: var(--info);
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.mood-history-details {
+  display: grid;
+  gap: 12px;
+}
+
+.mood-history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mood-history-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.mood-history-value {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.mood-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+}
+
 /* ==================== DASHBOARD ==================== */
 
 .dashboard-header {
