@@ -1,17 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
 
 const Meditation = () => {
   const [sessions, setSessions] = useState([]);
-  const [duration, setDuration] = useState(10); // minutes
+  const [duration, setDuration] = useState(10);
+  const [selectedSound, setSelectedSound] = useState('none');
   const [timeLeft, setTimeLeft] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   
-  const navigate = useNavigate();
+  const audioRef = useRef(null);
+
+  const soundOptions = [
+    { id: 'none', label: 'Silent', icon: '🔇', file: null },
+    { id: 'rain', label: 'Rain', icon: '🌧️', file: '/sounds/meditation/rain.mp3' },
+    { id: 'nature', label: 'Nature', icon: '🌲', file: '/sounds/meditation/nature.mp3' },
+    { id: 'whitenoise', label: 'White Noise', icon: '💨', file: '/sounds/meditation/whitenoise.mp3' },
+  ];
 
   useEffect(() => {
     fetchSessions();
@@ -26,7 +33,6 @@ const Meditation = () => {
         setTimeLeft((time) => time - 1);
       }, 1000);
     } else if (timeLeft === 0 && isActive) {
-      // Timer completed
       handleSessionComplete();
       setIsActive(false);
     }
@@ -48,23 +54,44 @@ const Meditation = () => {
   };
 
   const startTimer = () => {
-    setTimeLeft(duration * 60); // Convert minutes to seconds
+    setTimeLeft(duration * 60);
     setIsActive(true);
     setError('');
     setSuccess('');
+    
+    // Start audio if selected
+    if (selectedSound !== 'none' && audioRef.current) {
+      const sound = soundOptions.find(s => s.id === selectedSound);
+      if (sound?.file) {
+        audioRef.current.src = sound.file;
+        audioRef.current.load();
+        audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+      }
+    }
   };
 
   const pauseTimer = () => {
     setIsActive(false);
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
   };
 
   const resumeTimer = () => {
     setIsActive(true);
+    if (selectedSound !== 'none' && audioRef.current) {
+      audioRef.current.play();
+    }
   };
 
   const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(null);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current.src = ''; // Clear the source
+    }
   };
 
   const handleSessionComplete = async () => {
@@ -76,6 +103,13 @@ const Meditation = () => {
       setSessions([response.data, ...sessions]);
       setSuccess(`Great job! ${duration} minute meditation completed! 🧘`);
       setTimeLeft(null);
+      
+      // Stop audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.src = ''; // Clear the source
+      }
     } catch (error) {
       setError('Failed to save meditation session');
     }
@@ -94,7 +128,6 @@ const Meditation = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Sort sessions by date (newest first)
     const sortedSessions = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
     
     let currentDate = new Date(today);
@@ -116,71 +149,66 @@ const Meditation = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Loading...</p>
+      <div className="page-container">
+        <div className="text-center">
+          <p className="text-muted">Loading meditation sessions...</p>
+        </div>
       </div>
     );
   }
 
   const currentStreak = calculateStreak();
+  const currentSound = soundOptions.find(s => s.id === selectedSound);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>Meditation</h1>
-        <button
-          onClick={() => navigate('/dashboard')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Back to Dashboard
-        </button>
-      </div>
+    <div className="page-container">
+      <h1 className="mb-40">Meditation</h1>
 
-      {error && (
-        <div style={{ padding: '10px', marginBottom: '15px', backgroundColor: '#ffe6e6', color: 'red', borderRadius: '4px' }}>
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div style={{ padding: '10px', marginBottom: '15px', backgroundColor: '#d4edda', color: '#155724', borderRadius: '4px' }}>
-          {success}
-        </div>
-      )}
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       {/* Streak Display */}
-      <div style={{ 
-        backgroundColor: '#fff3cd', 
-        padding: '20px', 
-        borderRadius: '8px', 
-        border: '2px solid #ffc107',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>
-        <h2 style={{ margin: '0 0 10px 0', color: '#856404' }}>🔥 Current Streak</h2>
-        <p style={{ fontSize: '48px', fontWeight: 'bold', margin: 0, color: '#856404' }}>
-          {currentStreak} {currentStreak === 1 ? 'day' : 'days'}
-        </p>
+      <div className="meditation-streak-banner">
+        <div className="meditation-streak-content">
+          <span className="meditation-streak-icon">🔥</span>
+          <p className="meditation-streak-text">
+            {currentStreak} Day Streak
+          </p>
+        </div>
       </div>
 
+      {/* Audio element (hidden) - single element that updates source */}
+      <audio ref={audioRef} loop />
+
       {/* Timer Section */}
-      <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '30px', textAlign: 'center' }}>
+      <div className="meditation-timer-card">
         <h2>Meditation Timer</h2>
         
         {timeLeft === null ? (
           // Setup view
-          <>
-            <div style={{ marginBottom: '30px' }}>
-              <label style={{ display: 'block', marginBottom: '10px', fontSize: '18px', fontWeight: 'bold' }}>
-                Duration: {duration} minutes
-              </label>
+          <div className="meditation-setup">
+            {/* Sound Selector */}
+            <div className="meditation-sound-selector">
+              <label className="meditation-sound-label">Choose Your Sound:</label>
+              <div className="meditation-sound-options">
+                {soundOptions.map((sound) => (
+                  <button
+                    key={sound.id}
+                    onClick={() => setSelectedSound(sound.id)}
+                    className={`meditation-sound-btn ${selectedSound === sound.id ? 'meditation-sound-btn-active' : ''}`}
+                    type="button"
+                  >
+                    <span className="meditation-sound-icon">{sound.icon}</span>
+                    <span>{sound.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Duration Selector */}
+            <div className="meditation-duration-selector">
+              <label className="meditation-duration-label">Duration:</label>
+              <div className="meditation-duration-value">{duration} minutes</div>
               <input
                 type="range"
                 min="5"
@@ -189,9 +217,9 @@ const Meditation = () => {
                 value={duration}
                 onChange={(e) => setDuration(parseInt(e.target.value))}
                 disabled={isActive}
-                style={{ width: '100%', height: '8px', cursor: 'pointer' }}
+                className="mood-slider"
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#666', marginTop: '5px' }}>
+              <div className="mood-slider-range">
                 <span>5 min</span>
                 <span>60 min</span>
               </div>
@@ -199,62 +227,30 @@ const Meditation = () => {
             
             <button
               onClick={startTimer}
-              style={{
-                padding: '15px 40px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50px',
-                cursor: 'pointer',
-                fontSize: '18px',
-                fontWeight: 'bold',
-              }}
+              className="btn btn-success btn-large btn-full-width"
             >
               Start Meditation
             </button>
-          </>
+          </div>
         ) : (
           // Timer view
           <>
-            <div style={{ 
-              fontSize: '72px', 
-              fontWeight: 'bold', 
-              margin: '30px 0',
-              color: timeLeft <= 60 ? '#dc3545' : '#28a745'
-            }}>
+            <div className={`meditation-timer-display ${timeLeft <= 60 ? 'meditation-timer-warning' : 'meditation-timer-active'}`}>
               {formatTime(timeLeft)}
             </div>
             
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <div className="meditation-controls">
               {isActive ? (
                 <button
                   onClick={pauseTimer}
-                  style={{
-                    padding: '12px 30px',
-                    backgroundColor: '#ffc107',
-                    color: '#000',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                  }}
+                  className="btn btn-warning btn-large"
                 >
                   Pause
                 </button>
               ) : (
                 <button
                   onClick={resumeTimer}
-                  style={{
-                    padding: '12px 30px',
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                  }}
+                  className="btn btn-success btn-large"
                 >
                   Resume
                 </button>
@@ -262,16 +258,7 @@ const Meditation = () => {
               
               <button
                 onClick={resetTimer}
-                style={{
-                  padding: '12px 30px',
-                  backgroundColor: '#dc3545',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                }}
+                className="btn btn-danger btn-large"
               >
                 Reset
               </button>
@@ -281,28 +268,26 @@ const Meditation = () => {
       </div>
 
       {/* Session History */}
-      <div>
+      <div className="meditation-history-card">
         <h2>Session History ({sessions.length})</h2>
         
         {sessions.length === 0 ? (
-          <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '8px', border: '1px solid #ddd', textAlign: 'center' }}>
-            <p style={{ color: '#666', margin: 0 }}>
-              No meditation sessions yet. Start your first session above!
-            </p>
+          <div className="meditation-empty-state">
+            <p>No meditation sessions yet. Start your first session above!</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', border: '1px solid #ddd' }}>
+          <div className="table-container">
+            <table className="table">
               <thead>
-                <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #ddd' }}>
-                  <th style={{ padding: '12px', textAlign: 'left' }}>Date</th>
-                  <th style={{ padding: '12px', textAlign: 'left' }}>Duration</th>
+                <tr>
+                  <th>Date</th>
+                  <th>Duration</th>
                 </tr>
               </thead>
               <tbody>
                 {sessions.map((session) => (
-                  <tr key={session.id} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '12px' }}>
+                  <tr key={session.id}>
+                    <td>
                       {new Date(session.date).toLocaleDateString('en-US', { 
                         weekday: 'short',
                         year: 'numeric', 
@@ -310,9 +295,7 @@ const Meditation = () => {
                         day: 'numeric' 
                       })}
                     </td>
-                    <td style={{ padding: '12px', fontWeight: 'bold' }}>
-                      {session.duration} minutes
-                    </td>
+                    <td><strong>{session.duration} minutes</strong></td>
                   </tr>
                 ))}
               </tbody>

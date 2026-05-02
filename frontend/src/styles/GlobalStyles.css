@@ -1318,6 +1318,174 @@ p {
   padding-top: 12px;
   border-top: 1px solid var(--border);
 }
+
+/* ==================== MEDITATION PAGE ==================== */
+
+.meditation-streak-banner {
+  background: linear-gradient(135deg, var(--warning) 0%, #ff9500 100%);
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(255, 149, 0, 0.3);
+}
+
+.meditation-streak-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.meditation-streak-icon {
+  font-size: 48px;
+}
+
+.meditation-streak-text {
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.meditation-timer-card {
+  background: var(--surface);
+  padding: 48px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.meditation-timer-card h2 {
+  margin-bottom: 32px;
+}
+
+.meditation-setup {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.meditation-sound-selector {
+  margin-bottom: 32px;
+}
+
+.meditation-sound-label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.meditation-sound-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.meditation-sound-btn {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.meditation-sound-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--success);
+}
+
+.meditation-sound-btn-active {
+  background: rgba(52, 199, 89, 0.15);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.meditation-sound-icon {
+  font-size: 24px;
+}
+
+.meditation-duration-selector {
+  margin-bottom: 32px;
+}
+
+.meditation-duration-label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.meditation-duration-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--success);
+  margin-bottom: 12px;
+}
+
+.meditation-timer-display {
+  font-size: 96px;
+  font-weight: 700;
+  margin: 48px 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -2px;
+}
+
+.meditation-timer-active {
+  color: var(--success);
+}
+
+.meditation-timer-warning {
+  color: var(--danger);
+}
+
+.meditation-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.meditation-history-card {
+  background: var(--surface);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.meditation-history-card h2 {
+  margin-bottom: 24px;
+}
+
+.meditation-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .meditation-timer-display {
+    font-size: 64px;
+  }
+
+  .meditation-sound-options {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ==================== DASHBOARD ==================== */
 
 .dashboard-header {
