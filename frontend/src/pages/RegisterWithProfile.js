@@ -141,7 +141,11 @@ const RegisterWithProfile = () => {
       );
 
       // Register user
-      await register(formData.username, formData.email, formData.password);
+      await register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      });
 
       // Create profile
       await api.post('accounts/profile/', {
