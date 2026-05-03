@@ -8,6 +8,7 @@ const MoodRating = () => {
     anxiety_level: 5,
     stress_level: 5,
     overall_mood: 3,
+    date: new Date().toISOString().split('T')[0],  // ← ADD THIS
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -30,9 +31,10 @@ const MoodRating = () => {
   };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: parseInt(e.target.value),
+      [name]: name === 'date' ? value : parseInt(value),  // ← UPDATED
     });
   };
 
@@ -43,8 +45,22 @@ const MoodRating = () => {
     setSubmitting(true);
 
     try {
-      const response = await api.post('mental/mood/', formData);
+      const response = await api.post('mental/mood/', {
+        anxiety_level: formData.anxiety_level,
+        stress_level: formData.stress_level,
+        overall_mood: formData.overall_mood,
+        date: formData.date,  // ← ADD THIS
+      });
       setEntries([response.data, ...entries]);
+      
+      // Reset sliders but keep date as today
+      setFormData({
+        anxiety_level: 5,
+        stress_level: 5,
+        overall_mood: 3,
+        date: new Date().toISOString().split('T')[0],  // ← RESET TO TODAY
+      });
+      
       setSuccess('Mood rating saved!');
       setSubmitting(false);
     } catch (error) {
@@ -113,9 +129,23 @@ const MoodRating = () => {
 
       {/* Rating Form */}
       <div className="mood-form-card">
-        <h2>How are you feeling today?</h2>
+        <h2>How are you feeling?</h2>
         <form onSubmit={handleSubmit}>
           
+          {/* ← ADD DATE PICKER HERE */}
+          <div className="form-group" style={{ marginBottom: '32px' }}>
+            <label className="form-label">Date:</label>
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              max={new Date().toISOString().split('T')[0]}
+              className="form-input"
+              required
+            />
+          </div>
+
           {/* Anxiety Level */}
           <div className="mood-slider-group">
             <label className="mood-slider-label">
