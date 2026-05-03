@@ -21,9 +21,9 @@ const Meditation = () => {
   ];
 
   useEffect(() => {
-    // ... timer logic
+    fetchSessions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive, timeLeft]);
+  }, []);
 
   // Timer logic
   useEffect(() => {
@@ -44,11 +44,14 @@ const Meditation = () => {
   }, [isActive, timeLeft]);
 
   const fetchSessions = async () => {
+    console.log('Fetching meditation sessions...');
     try {
       const response = await api.get('mental/meditation/');
+      console.log('Response:', response.data);
       setSessions(response.data);
       setLoading(false);
     } catch (error) {
+      console.error('Error fetching sessions:', error);
       setError('Failed to load meditation sessions');
       setLoading(false);
     }
