@@ -81,12 +81,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mindfit_backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Database
 database_url = config('DATABASE_URL', default='')
 if database_url:
     DATABASES = {
