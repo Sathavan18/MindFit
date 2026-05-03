@@ -12,6 +12,7 @@ import MoodRating from './pages/MoodRating';
 import Meditation from './pages/Meditation';
 import Articles from './pages/Articles';
 import Progress from './pages/Progress';
+import Insights from './pages/Insights';
 import './App.css';
 
 function App() {
@@ -108,6 +109,18 @@ function App() {
                   <>
                     <Navbar />
                     <Progress />
+                  </>
+                </PrivateRoute>
+              } 
+            />
+
+            <Route 
+              path="/insights" 
+              element={
+                <PrivateRoute>
+                  <>
+                    <Navbar />
+                    <Insights />
                   </>
                 </PrivateRoute>
               } 

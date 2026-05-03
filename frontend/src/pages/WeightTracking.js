@@ -8,6 +8,7 @@ const WeightTracking = () => {
   const [formData, setFormData] = useState({
     weight: '',
     calorie_intake: '',
+    date: new Date().toISOString().split('T')[0],  // ← ADD THIS
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -50,6 +51,7 @@ const WeightTracking = () => {
       const response = await api.post('physical/weight/', {
         weight: parseFloat(formData.weight),
         calorie_intake: parseInt(formData.calorie_intake),
+        date: formData.date,  // ← ADD THIS
       });
 
       setEntries([response.data, ...entries]);
@@ -57,6 +59,7 @@ const WeightTracking = () => {
       setFormData({
         weight: '',
         calorie_intake: '',
+        date: new Date().toISOString().split('T')[0],  // ← RESET TO TODAY
       });
       
       setSuccess('Weight entry logged successfully!');
@@ -98,9 +101,23 @@ const WeightTracking = () => {
 
       {/* Log New Entry Form */}
       <div className="weight-form-card">
-        <h2>Log Today's Entry</h2>
+        <h2>Log Weight Entry</h2>
         <form onSubmit={handleSubmit}>
           <div className="weight-form-grid">
+            {/* ← ADD DATE PICKER HERE */}
+            <div className="form-group">
+              <label className="form-label">Date:</label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                max={new Date().toISOString().split('T')[0]}
+                className="form-input"
+                required
+              />
+            </div>
+
             <div className="form-group">
               <label className="form-label">Weight (kg):</label>
               <input
@@ -117,7 +134,7 @@ const WeightTracking = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Calorie Intake (today):</label>
+              <label className="form-label">Calorie Intake:</label>
               <input
                 type="number"
                 name="calorie_intake"

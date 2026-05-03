@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class JournalEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -14,7 +15,7 @@ class JournalEntry(models.Model):
 
 class MoodRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=timezone.now)
     ANXIETY_CHOICES = [
         (1, 'Not Anxious At All'),
         (2, 'Not Anxious'),
