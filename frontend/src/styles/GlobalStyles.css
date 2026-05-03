@@ -1486,6 +1486,48 @@ p {
   }
 }
 
+/* Quick Select Buttons */
+.meditation-quick-select {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.meditation-quick-btn {
+  flex: 1;
+  min-width: 60px;
+  padding: 12px 16px;
+  background: var(--surface-light);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.meditation-quick-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.meditation-quick-btn-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.meditation-custom-input {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.meditation-custom-input input {
+  font-size: 18px;
+  font-weight: 600;
+}
+
 /* ==================== ARTICLES PAGE ==================== */
 
 .articles-recommendations {

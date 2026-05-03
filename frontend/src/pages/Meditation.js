@@ -41,6 +41,7 @@ const Meditation = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, timeLeft]);
 
   const fetchSessions = async () => {
@@ -94,7 +95,7 @@ const Meditation = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      audioRef.current.src = ''; // Clear the source
+      audioRef.current.src = '';
     }
   };
 
@@ -112,7 +113,7 @@ const Meditation = () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
-        audioRef.current.src = ''; // Clear the source
+        audioRef.current.src = '';
       }
     } catch (error) {
       setError('Failed to save meditation session');
@@ -180,7 +181,7 @@ const Meditation = () => {
         </div>
       </div>
 
-      {/* Audio element (hidden) - single element that updates source */}
+      {/* Audio element (hidden) */}
       <audio ref={audioRef} loop />
 
       {/* Timer Section */}
@@ -211,20 +212,35 @@ const Meditation = () => {
             {/* Duration Selector */}
             <div className="meditation-duration-selector">
               <label className="meditation-duration-label">Duration:</label>
-              <div className="meditation-duration-value">{duration} minutes</div>
-              <input
-                type="range"
-                min="5"
-                max="60"
-                step="5"
-                value={duration}
-                onChange={(e) => setDuration(parseInt(e.target.value))}
-                disabled={isActive}
-                className="mood-slider"
-              />
-              <div className="mood-slider-range">
-                <span>5 min</span>
-                <span>60 min</span>
+              
+              {/* Quick Select Buttons */}
+              <div className="meditation-quick-select">
+                {[3, 5, 10, 15, 20, 30].map((mins) => (
+                  <button
+                    key={mins}
+                    type="button"
+                    onClick={() => setDuration(mins)}
+                    className={`meditation-quick-btn ${duration === mins ? 'meditation-quick-btn-active' : ''}`}
+                  >
+                    {mins} min
+                  </button>
+                ))}
+              </div>
+              
+              {/* Custom Input */}
+              <div className="meditation-custom-input">
+                <label className="form-label">Or enter custom duration:</label>
+                <input
+                  type="number"
+                  min="3"
+                  max="120"
+                  value={duration}
+                  onChange={(e) => setDuration(Math.max(3, parseInt(e.target.value) || 3))}
+                  className="form-input"
+                  placeholder="Minutes"
+                  style={{ textAlign: 'center', maxWidth: '200px', margin: '8px auto' }}
+                />
+                <span className="text-muted text-small">minutes (3-120)</span>
               </div>
             </div>
             
