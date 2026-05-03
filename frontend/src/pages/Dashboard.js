@@ -15,6 +15,13 @@ const Dashboard = () => {
       image: '/images/dashboard/profile.jpg',
     },
     {
+      id: 'insights',  // ← ADD THIS
+      title: 'Insights',
+      description: 'Discover connections between your physical and mental health',
+      path: '/insights',
+      image: '/images/dashboard/insights.jpg',
+    },
+    {
       id: 'weight',
       title: 'Weight Tracking',
       description: 'Monitor your weight progress and daily calorie intake',

@@ -14,6 +14,7 @@ const Navbar = () => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
     { path: '/profile', label: 'Profile', icon: '👤' },
+    { path: '/insights', label: 'Insights', icon: '💡' },
     { path: '/weight-tracking', label: 'Weight', icon: '⚖️' },
     { path: '/mood', label: 'Mood', icon: '😊' },
     { path: '/journal', label: 'Journal', icon: '📝' },
