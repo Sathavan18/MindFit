@@ -21,8 +21,9 @@ const Meditation = () => {
   ];
 
   useEffect(() => {
-    fetchSessions();
-  }, []);
+    // ... timer logic
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive, timeLeft]);
 
   // Timer logic
   useEffect(() => {
@@ -158,7 +159,6 @@ const Meditation = () => {
   }
 
   const currentStreak = calculateStreak();
-  const currentSound = soundOptions.find(s => s.id === selectedSound);
 
   return (
     <div className="page-container">
