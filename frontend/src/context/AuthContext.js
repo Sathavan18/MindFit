@@ -3,6 +3,7 @@ import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
+// Custom hook to access auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -15,12 +16,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on mount
+  // Check if user is logged in on app load
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     const username = localStorage.getItem('username');
     if (token && username) {
-      setUser(username);  // Just store the username string, not an object
+      setUser(username);
     }
     setLoading(false);
   }, []);
@@ -28,10 +29,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const data = await authService.login(username, password);
+      // Store tokens and username in localStorage for persisnt login
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
       localStorage.setItem('username', username);
-      setUser(username);  // Just the username string
+      setUser(username);
       return { success: true };
     } catch (error) {
       return { 
@@ -55,6 +57,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Clear all auth data from localStorage
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('username');

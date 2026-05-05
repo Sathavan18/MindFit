@@ -12,6 +12,7 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  // Navigation items with icons for each page
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <Home size={20} /> },
     { path: '/profile', label: 'Profile', icon: <User size={20} /> },
@@ -24,12 +25,13 @@ const Navbar = () => {
     { path: '/progress', label: 'Progress', icon: <TrendingUp size={20} /> },
   ];
 
+  // check if the current page matches the path for active styling
   const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo/Brand */}
+        {/* Logo - clicking on it returns to dashboard*/}
         <div 
           onClick={() => navigate('/dashboard')}
           className="navbar-logo"
@@ -37,7 +39,7 @@ const Navbar = () => {
           <Activity/> MindFit
         </div>
 
-        {/* Navigation Links */}
+        {/* Main navigation links */}
         <div className="navbar-links">
           {navItems.map((item) => (
             <button

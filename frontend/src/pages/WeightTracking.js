@@ -8,22 +8,25 @@ const WeightTracking = () => {
   const [formData, setFormData] = useState({
     weight: '',
     calorie_intake: '',
-    date: new Date().toISOString().split('T')[0],  // ← ADD THIS
+    date: new Date().toISOString().split('T')[0],
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Fetch weight entries and user profile
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
+      // get user profile for target calories
       const profileResponse = await api.get('accounts/profile/');
       setProfile(profileResponse.data);
 
+      // get all weight entries
       const entriesResponse = await api.get('physical/weight/');
       setEntries(entriesResponse.data);
       
@@ -51,15 +54,17 @@ const WeightTracking = () => {
       const response = await api.post('physical/weight/', {
         weight: parseFloat(formData.weight),
         calorie_intake: parseInt(formData.calorie_intake),
-        date: formData.date,  // ← ADD THIS
+        date: formData.date,
       });
 
+      // Add new entry to the top of the list
       setEntries([response.data, ...entries]);
       
+      // Reset form to today's data
       setFormData({
         weight: '',
         calorie_intake: '',
-        date: new Date().toISOString().split('T')[0],  // ← RESET TO TODAY
+        date: new Date().toISOString().split('T')[0],
       });
       
       setSuccess('Weight entry logged successfully!');
@@ -70,6 +75,7 @@ const WeightTracking = () => {
     }
   };
 
+  // Calculate how many calories over/under target
   const getCalorieDifference = (intake) => {
     if (!profile) return 0;
     return intake - profile.target_calories;
@@ -92,7 +98,7 @@ const WeightTracking = () => {
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
-      {/* Target Calories Banner */}
+      {/* Show user's daily calorie target */}
       {profile && (
         <div className="weight-target-banner">
           <p><strong>Your Daily Target:</strong> {profile.target_calories} calories</p>
@@ -104,7 +110,7 @@ const WeightTracking = () => {
         <h2>Log Weight Entry</h2>
         <form onSubmit={handleSubmit}>
           <div className="weight-form-grid">
-            {/* ← ADD DATE PICKER HERE */}
+            {/* Date picker - allows backdating entries */}
             <div className="form-group">
               <label className="form-label">Date:</label>
               <input
@@ -112,7 +118,7 @@ const WeightTracking = () => {
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                max={new Date().toISOString().split('T')[0]}
+                max={new Date().toISOString().split('T')[0]} // prevent selecting future dates
                 className="form-input"
                 required
               />
@@ -194,7 +200,7 @@ const WeightTracking = () => {
         </div>
       )}
 
-      {/* Calorie Adherence Graph */}
+      {/* Calorie Adherence Graph - green if under, red if over */}
       {entries.length > 0 && profile && (
         <div className="weight-graph-card">
           <h2>Calorie Adherence</h2>
@@ -243,6 +249,7 @@ const WeightTracking = () => {
                 }}
               />
               <Legend />
+              {/* Blue dashed line showing target calories */}
               <ReferenceLine 
                 y={profile.target_calories} 
                 stroke="var(--primary)" 
@@ -255,6 +262,7 @@ const WeightTracking = () => {
                 name="Calorie Intake"
                 radius={[8, 8, 0, 0]}
               >
+                {/* Color bars based on whether over or under target */}
                 {[...entries].reverse().map((entry, index) => (
                   <rect
                     key={`bar-${index}`}
@@ -271,7 +279,7 @@ const WeightTracking = () => {
         </div>
       )}
 
-      {/* Weight History */}
+      {/* Table to show all weight entries */}
       <div className="weight-history-card">
         <h2>Weight History</h2>
         
@@ -298,6 +306,7 @@ const WeightTracking = () => {
                       <td>{new Date(entry.date).toLocaleDateString()}</td>
                       <td>
                         <strong>{entry.weight} kg</strong>
+                        {/* Show weight change compared to previous entry */}
                         {index > 0 && (
                           <span className={`weight-change-indicator ${
                             entry.weight < entries[index - 1].weight ? 'weight-change-down' :
