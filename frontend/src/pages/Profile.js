@@ -18,6 +18,7 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Load user profile on component mount
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -26,6 +27,7 @@ const Profile = () => {
     try {
       const response = await api.get('accounts/profile/');
       setProfile(response.data);
+      // Populate form data with existing profile
       setFormData({
         age: response.data.age,
         gender: response.data.gender,
@@ -49,6 +51,7 @@ const Profile = () => {
     });
   };
 
+  // Calculate BMR using Mifflin-St Jeor equation
   const calculateBMR = (weight, height, age, gender) => {
     if (gender === 'male') {
       return (10 * weight) + (6.25 * height) - (5 * age) + 5;
@@ -57,6 +60,7 @@ const Profile = () => {
     }
   };
 
+  // Calculate Total Daily Energy Expenditure (BMR × activity multiplier)
   const calculateTDEE = (bmr, activityLevel) => {
     const activityMultipliers = {
       'sedentary': 1.2,
@@ -68,6 +72,7 @@ const Profile = () => {
     return bmr * activityMultipliers[activityLevel];
   };
 
+  // Calculate target calories based on goal (±300 cal from TDEE)
   const calculateTargetCalories = (bmr, activityLevel, goal) => {
     const dailyCalories = calculateTDEE(bmr, activityLevel);
     
@@ -87,6 +92,7 @@ const Profile = () => {
     setSaving(true);
 
     try {
+      // Recalculate BMR and target calories with updated data
       const bmr = calculateBMR(
         parseFloat(formData.weight),
         parseInt(formData.height),
@@ -100,6 +106,7 @@ const Profile = () => {
         formData.goal
       );
 
+      // Update profile on backend
       const response = await api.put('accounts/profile/', {
         age: parseInt(formData.age),
         gender: formData.gender,
@@ -123,6 +130,7 @@ const Profile = () => {
   };
 
   const handleCancel = () => {
+    // Reset form to original profile data
     setFormData({
       age: profile.age,
       gender: profile.gender,
@@ -157,6 +165,7 @@ const Profile = () => {
     );
   }
 
+  // Calculate TDEE for display
   const tdee = Math.round(calculateTDEE(profile.bmr, profile.activity_level));
 
   return (
@@ -166,7 +175,7 @@ const Profile = () => {
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
-      {/* Summary Cards */}
+      {/* Summary cards showing key metrics */}
       <div className="profile-summary">
         <div className="profile-summary-card">
           <div className="profile-summary-label">BMR</div>
@@ -200,7 +209,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Profile Details */}
+      {/* Profile details with view/edit toggle */}
       <div className="profile-details">
         <div className="profile-details-header">
           <h2 style={{ margin: 0 }}>Profile Details</h2>
@@ -212,7 +221,7 @@ const Profile = () => {
         </div>
 
         {!editing ? (
-          // View Mode
+          // View mode - display profile info
           <div className="profile-info-grid">
             <div className="profile-info-item">
               <span className="profile-info-label">Age:</span>
@@ -248,7 +257,7 @@ const Profile = () => {
             )}
           </div>
         ) : (
-          // Edit Mode
+          // Edit mode - show form
           <form onSubmit={handleSubmit}>
             <div className="profile-form-grid">
               <div className="form-group">

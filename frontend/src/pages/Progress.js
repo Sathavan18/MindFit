@@ -12,12 +12,15 @@ const Progress = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Fetch all tracking data on component mount
   useEffect(() => {
     fetchAllData();
   }, []);
 
+  // Load data from all tracking endpoints
   const fetchAllData = async () => {
     try {
+      // Fetch all data in parallel for faster loading
       const [weight, mood, meditation, journal] = await Promise.all([
         api.get('physical/weight/'),
         api.get('mental/mood/'),
@@ -39,6 +42,7 @@ const Progress = () => {
     }
   };
 
+  // Calculate current streak (consecutive days from today backwards)
   const calculateStreak = (entries) => {
     if (entries.length === 0) return 0;
     
@@ -46,36 +50,40 @@ const Progress = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    // Sort entries by date (most recent first)
     const sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
     
     let currentDate = new Date(today);
     
+    // Count consecutive days starting from today
     for (let entry of sortedEntries) {
       const entryDate = new Date(entry.date);
       entryDate.setHours(0, 0, 0, 0);
       
       if (entryDate.getTime() === currentDate.getTime()) {
         streak++;
-        currentDate.setDate(currentDate.getDate() - 1);
+        currentDate.setDate(currentDate.getDate() - 1); // Move to previous day
       } else if (entryDate.getTime() < currentDate.getTime()) {
-        break;
+        break; // Gap found, streak ends
       }
     }
     
     return streak;
   };
 
+  // Calculate total unique days with entries (all-time activity)
   const calculateTotalDays = (entries) => {
     if (entries.length === 0) return 0;
     const uniqueDates = new Set(entries.map(e => e.date));
     return uniqueDates.size;
   };
 
+  // Get icon based on streak length (gamification)
   const getStreakIcon = (streak) => {
-    if (streak >= 7) return <Flame size={32} style={{ color: '#f59e0b' }} />;
-    if (streak >= 3) return <Star size={32} style={{ color: '#fbbf24' }} />;
-    if (streak >= 1) return <Sparkles size={32} style={{ color: '#60a5fa' }} />;
-    return <Moon size={32} style={{ color: '#9ca3af' }} />;
+    if (streak >= 7) return <Flame size={32} style={{ color: '#f59e0b' }} />; // 7+ days = fire
+    if (streak >= 3) return <Star size={32} style={{ color: '#fbbf24' }} />; // 3-6 days = star
+    if (streak >= 1) return <Sparkles size={32} style={{ color: '#60a5fa' }} />; // 1-2 days = sparkles
+    return <Moon size={32} style={{ color: '#9ca3af' }} />; // 0 days = moon
   };
 
   if (loading) {
@@ -88,19 +96,23 @@ const Progress = () => {
     );
   }
 
+  // Calculate streaks for each tracking feature
   const weightStreak = calculateStreak(stats.weightEntries);
   const moodStreak = calculateStreak(stats.moodRatings);
   const meditationStreak = calculateStreak(stats.meditationSessions);
   const journalStreak = calculateStreak(stats.journalEntries);
 
+  // Calculate all-time activity days for each feature
   const totalWeightDays = calculateTotalDays(stats.weightEntries);
   const totalMoodDays = calculateTotalDays(stats.moodRatings);
   const totalMeditationDays = calculateTotalDays(stats.meditationSessions);
   const totalJournalDays = calculateTotalDays(stats.journalEntries);
 
+  // Calculate overall statistics
   const totalEntries = stats.weightEntries.length + stats.moodRatings.length + 
                        stats.meditationSessions.length + stats.journalEntries.length;
   
+  // Count unique days with any activity across all features
   const activeDays = new Set([
     ...stats.weightEntries.map(e => e.date),
     ...stats.moodRatings.map(e => e.date),
@@ -114,6 +126,7 @@ const Progress = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
+      {/* Overall activity summary */}
       <div className="progress-section">
         <h2>Overall Activity</h2>
         <div className="progress-overall-stats">
@@ -129,6 +142,7 @@ const Progress = () => {
         </div>
       </div>
 
+      {/* Current streaks with visual indicators */}
       <div className="progress-section">
         <h2>
           <Flame className="inline-icon" style={{ color: '#f59e0b' }} />
@@ -136,6 +150,7 @@ const Progress = () => {
         </h2>
         <div className="progress-streaks-grid">
           
+          {/* Weight tracking streak */}
           <div className={`progress-streak-card ${weightStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(weightStreak)}</span>
             <div className="progress-streak-number">{weightStreak}</div>
@@ -145,6 +160,7 @@ const Progress = () => {
             </div>
           </div>
 
+          {/* Mood tracking streak */}
           <div className={`progress-streak-card ${moodStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(moodStreak)}</span>
             <div className="progress-streak-number">{moodStreak}</div>
@@ -154,6 +170,7 @@ const Progress = () => {
             </div>
           </div>
 
+          {/* Meditation streak */}
           <div className={`progress-streak-card ${meditationStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(meditationStreak)}</span>
             <div className="progress-streak-number">{meditationStreak}</div>
@@ -163,6 +180,7 @@ const Progress = () => {
             </div>
           </div>
 
+          {/* Journaling streak */}
           <div className={`progress-streak-card ${journalStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(journalStreak)}</span>
             <div className="progress-streak-number">{journalStreak}</div>
@@ -175,6 +193,7 @@ const Progress = () => {
         </div>
       </div>
 
+      {/* All-time activity statistics */}
       <div className="progress-section">
         <h2>All-Time Activity</h2>
         <div className="progress-activity-grid">

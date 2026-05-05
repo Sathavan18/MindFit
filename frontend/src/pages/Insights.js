@@ -16,10 +16,12 @@ const Insights = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Fetch all tracking data on component mount
   useEffect(() => {
     fetchAllData();
   }, []);
 
+  // Load data from all endpoints in parallel for faster loading
   const fetchAllData = async () => {
     try {
       const [weight, mood, meditation, journal] = await Promise.all([
@@ -43,12 +45,16 @@ const Insights = () => {
     }
   };
 
+  // Combine weight and mood data by date for timeline visualization
+  // Creates a unified dataset where each date has weight and mood metrics
   const getCombinedTimelineData = () => {
+    // Get all unique dates from both weight and mood entries
     const allDates = new Set([
       ...data.weight.map(e => e.date),
       ...data.mood.map(e => e.date),
     ]);
 
+    // For each date, find matching weight and mood entries
     return Array.from(allDates).sort().map(date => {
       const weightEntry = data.weight.find(e => e.date === date);
       const moodEntry = data.mood.find(e => e.date === date);
@@ -63,10 +69,12 @@ const Insights = () => {
     });
   };
 
+  // Match calorie intake with mood data for correlation analysis
+  // Returns only dates where both weight (with calories) and mood exist
   const getCalorieMoodData = () => {
     return data.weight.map(entry => {
       const moodEntry = data.mood.find(m => m.date === entry.date);
-      if (!moodEntry) return null;
+      if (!moodEntry) return null; // Skip dates without mood data
 
       return {
         date: entry.date,
@@ -74,12 +82,15 @@ const Insights = () => {
         mood: moodEntry.overall_mood,
         stress: moodEntry.stress_level,
       };
-    }).filter(Boolean);
+    }).filter(Boolean); // Remove null entries
   };
 
+  // Calculate average mood metrics on days with vs without meditation
+  // Used to measure meditation's impact on mental health
   const getMeditationImpact = () => {
     const daysWithMeditation = new Set(data.meditation.map(m => m.date));
     
+    // Split mood entries into two groups
     const moodWithMeditation = [];
     const moodWithoutMeditation = [];
 
@@ -91,6 +102,7 @@ const Insights = () => {
       }
     });
 
+    // Calculate averages for days with meditation
     const avgWithMeditation = moodWithMeditation.length > 0
       ? {
           mood: (moodWithMeditation.reduce((sum, m) => sum + m.overall_mood, 0) / moodWithMeditation.length).toFixed(1),
@@ -99,6 +111,7 @@ const Insights = () => {
         }
       : null;
 
+    // Calculate averages for days without meditation
     const avgWithoutMeditation = moodWithoutMeditation.length > 0
       ? {
           mood: (moodWithoutMeditation.reduce((sum, m) => sum + m.overall_mood, 0) / moodWithoutMeditation.length).toFixed(1),
@@ -110,6 +123,8 @@ const Insights = () => {
     return { avgWithMeditation, avgWithoutMeditation };
   };
 
+  // Calculate average mood on days with vs without journaling
+  // Used to measure journaling's impact on mood
   const getJournalImpact = () => {
     const daysWithJournal = new Set(data.journal.map(j => j.date));
     
@@ -135,10 +150,14 @@ const Insights = () => {
     return { avgWithJournal, avgWithoutJournal };
   };
 
+  // Analyze data to detect behavioral patterns
+  // Returns array of discovered patterns with descriptions
   const detectPatterns = () => {
     const patterns = [];
     const calorieMoodData = getCalorieMoodData();
 
+    // Pattern 1: Stress eating detection
+    // Compare calorie intake on high-stress vs low-stress days
     if (calorieMoodData.length >= 5) {
       const highStressDays = calorieMoodData.filter(d => d.stress >= 7);
       const lowStressDays = calorieMoodData.filter(d => d.stress <= 4);
@@ -148,6 +167,7 @@ const Insights = () => {
         const avgCaloriesLowStress = lowStressDays.reduce((sum, d) => sum + d.calories, 0) / lowStressDays.length;
         const diff = avgCaloriesHighStress - avgCaloriesLowStress;
 
+        // Only report if difference is significant (>200 calories)
         if (Math.abs(diff) > 200) {
           patterns.push({
             icon: diff > 0 ? <Frown size={20} /> : <Heart size={20} />,
@@ -160,6 +180,8 @@ const Insights = () => {
       }
     }
 
+    // Pattern 2: Meditation effectiveness
+    // Report if meditation significantly reduces stress
     const { avgWithMeditation, avgWithoutMeditation } = getMeditationImpact();
     if (avgWithMeditation && avgWithoutMeditation) {
       const stressReduction = avgWithoutMeditation.stress - avgWithMeditation.stress;
@@ -173,6 +195,8 @@ const Insights = () => {
       }
     }
 
+    // Pattern 3: Mood and weight loss correlation
+    // Check if positive mood aligns with weight loss
     const timelineData = getCombinedTimelineData().filter(d => d.weight && d.mood);
     if (timelineData.length >= 7) {
       const recentWeek = timelineData.slice(-7);
@@ -191,12 +215,16 @@ const Insights = () => {
     return patterns;
   };
 
+  // Generate personalized recommendations based on user's data
+  // Suggests activities that have proven beneficial for the user
   const getRecommendations = () => {
     const recommendations = [];
     const { avgWithMeditation, avgWithoutMeditation } = getMeditationImpact();
 
+    // Recommendation 1: Meditate more if it's helping but underutilized
     if (avgWithMeditation && avgWithoutMeditation) {
       const stressReduction = avgWithoutMeditation.stress - avgWithMeditation.stress;
+      // If meditation helps (>1 point reduction) but user doesn't meditate regularly (<50% of days)
       if (stressReduction > 1 && data.meditation.length < data.mood.length * 0.5) {
         recommendations.push({
           icon: <Wind size={20} />,
@@ -206,9 +234,11 @@ const Insights = () => {
       }
     }
 
+    // Recommendation 2: Journal more if it's helping but underutilized
     const { avgWithJournal, avgWithoutJournal } = getJournalImpact();
     if (avgWithJournal && avgWithoutJournal) {
       const moodImprovement = parseFloat(avgWithJournal) - parseFloat(avgWithoutJournal);
+      // If journaling helps (>0.5 point improvement) but user doesn't journal regularly
       if (moodImprovement > 0.5 && data.journal.length < data.mood.length * 0.5) {
         recommendations.push({
           icon: <BookOpen size={20} />,
@@ -218,6 +248,7 @@ const Insights = () => {
       }
     }
 
+    // Recommendation 3: Focus on mental wellness if mood is consistently low
     const recentMood = data.mood.slice(-7);
     const recentWeight = data.weight.slice(-7);
     if (recentMood.length >= 5 && recentWeight.length >= 5) {
@@ -244,8 +275,10 @@ const Insights = () => {
     );
   }
 
+  // Check if user has enough data for meaningful insights (minimum 5 entries each)
   const hasEnoughData = data.weight.length >= 5 && data.mood.length >= 5;
 
+  // Show empty state if insufficient data
   if (!hasEnoughData) {
     return (
       <div className="page-container">
@@ -266,6 +299,7 @@ const Insights = () => {
     );
   }
 
+  // Generate all data for visualizations and insights
   const timelineData = getCombinedTimelineData();
   const calorieMoodData = getCalorieMoodData();
   const { avgWithMeditation, avgWithoutMeditation } = getMeditationImpact();
@@ -282,6 +316,7 @@ const Insights = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
+      {/* Chart 1: Weight and mood trends over time (dual-axis chart) */}
       <div className="insights-section">
         <h2>Mind-Body Connection Over Time</h2>
         <div className="insights-chart-card">
@@ -294,11 +329,13 @@ const Insights = () => {
                 tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 stroke="var(--text-secondary)"
               />
+              {/* Left Y-axis for weight (kg) */}
               <YAxis 
                 yAxisId="left"
                 label={{ value: 'Weight (kg)', angle: -90, position: 'insideLeft', fill: 'var(--text-secondary)' }}
                 stroke="var(--text-secondary)"
               />
+              {/* Right Y-axis for mood and stress (1-10 scale) */}
               <YAxis 
                 yAxisId="right"
                 orientation="right"
@@ -311,6 +348,7 @@ const Insights = () => {
                 contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px' }}
               />
               <Legend />
+              {/* Weight line (left axis) */}
               <Line 
                 yAxisId="left"
                 type="monotone" 
@@ -319,8 +357,9 @@ const Insights = () => {
                 strokeWidth={3}
                 dot={{ fill: 'var(--success)', r: 5 }}
                 name="Weight (kg)"
-                connectNulls
+                connectNulls // Connect line across missing data points
               />
+              {/* Mood line (right axis) */}
               <Line 
                 yAxisId="right"
                 type="monotone" 
@@ -331,6 +370,7 @@ const Insights = () => {
                 name="Mood (1-5)"
                 connectNulls
               />
+              {/* Stress line (right axis) */}
               <Line 
                 yAxisId="right"
                 type="monotone" 
@@ -349,6 +389,7 @@ const Insights = () => {
         </div>
       </div>
 
+      {/* Chart 2: Scatter plot showing correlation between stress and calorie intake */}
       {calorieMoodData.length >= 5 && (
         <div className="insights-section">
           <h2>Eating Patterns & Mental State</h2>
@@ -379,6 +420,7 @@ const Insights = () => {
                     return value;
                   }}
                 />
+                {/* Each point represents one day's data */}
                 <Scatter 
                   data={calorieMoodData} 
                   fill="var(--primary)" 
@@ -393,9 +435,11 @@ const Insights = () => {
         </div>
       )}
 
+      {/* Comparison cards showing activity impact on mental health */}
       <div className="insights-section">
         <h2>Activity Impact Analysis</h2>
         <div className="insights-grid">
+          {/* Meditation impact comparison */}
           {avgWithMeditation && avgWithoutMeditation && (
             <>
               <div className="insights-stat-card">
@@ -420,6 +464,7 @@ const Insights = () => {
                 </div>
               </div>
 
+              {/* Show the difference (stress reduction from meditation) */}
               <div className="insights-stat-card">
                 <TrendingDown size={24} className="insights-stat-icon" style={{ color: 'var(--primary)' }} />
                 <div className="insights-stat-title">Stress Reduction</div>
@@ -433,6 +478,7 @@ const Insights = () => {
             </>
           )}
 
+          {/* Journaling impact comparison */}
           {avgWithJournal && avgWithoutJournal && (
             <>
               <div className="insights-stat-card">
@@ -461,6 +507,7 @@ const Insights = () => {
         </div>
       </div>
 
+      {/* Display detected behavioral patterns */}
       {patterns.length > 0 && (
         <div className="insights-section">
           <h2>Detected Patterns</h2>
@@ -478,6 +525,7 @@ const Insights = () => {
         </div>
       )}
 
+      {/* Display personalized recommendations based on user's data */}
       {recommendations.length > 0 && (
         <div className="insights-section">
           <h2>Personalized Recommendations</h2>

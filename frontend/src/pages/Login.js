@@ -38,6 +38,7 @@ const Login = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
+        {/* Header with logo and title */}
         <div className="auth-header">
           <div className="auth-logo">
             <Activity size={40} style={{ color: 'var(--primary)' }} />
@@ -48,6 +49,7 @@ const Login = () => {
 
         {error && <div className="alert alert-error">{error}</div>}
 
+        {/* Login form */}
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label className="form-label">Username</label>
@@ -84,6 +86,7 @@ const Login = () => {
           </button>
         </form>
 
+        {/* Link to registration page */}
         <div className="auth-footer">
           Don't have an account?{' '}
           <Link to="/register" className="auth-link">

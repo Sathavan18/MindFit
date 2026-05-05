@@ -8,13 +8,14 @@ const MoodRating = () => {
     anxiety_level: 5,
     stress_level: 5,
     overall_mood: 3,
-    date: new Date().toISOString().split('T')[0],  // ← ADD THIS
+    date: new Date().toISOString().split('T')[0],
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Fetch all mood ratings on component mount
   useEffect(() => {
     fetchEntries();
   }, []);
@@ -34,7 +35,7 @@ const MoodRating = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === 'date' ? value : parseInt(value),  // ← UPDATED
+      [name]: name === 'date' ? value : parseInt(value),
     });
   };
 
@@ -49,16 +50,18 @@ const MoodRating = () => {
         anxiety_level: formData.anxiety_level,
         stress_level: formData.stress_level,
         overall_mood: formData.overall_mood,
-        date: formData.date,  // ← ADD THIS
+        date: formData.date,
       });
+      
+      // Add new entry to top of list
       setEntries([response.data, ...entries]);
       
-      // Reset sliders but keep date as today
+      // Reset sliders to middle values and date to today
       setFormData({
         anxiety_level: 5,
         stress_level: 5,
         overall_mood: 3,
-        date: new Date().toISOString().split('T')[0],  // ← RESET TO TODAY
+        date: new Date().toISOString().split('T')[0],
       });
       
       setSuccess('Mood rating saved!');
@@ -69,6 +72,7 @@ const MoodRating = () => {
     }
   };
 
+  // Get text label for anxiety level (1-10 scale)
   const getAnxietyLabel = (level) => {
     const labels = {
       1: 'Not Anxious At All', 2: 'Not Anxious', 3: 'Slightly Anxious',
@@ -78,6 +82,7 @@ const MoodRating = () => {
     return labels[level];
   };
 
+  // Get text label for stress level (1-10 scale)
   const getStressLabel = (level) => {
     const labels = {
       1: 'Not Stressed At All', 2: 'Not Stressed', 3: 'Slightly Stressed',
@@ -87,23 +92,27 @@ const MoodRating = () => {
     return labels[level];
   };
 
+  // Get text label for overall mood (1-5 scale)
   const getMoodLabel = (level) => {
     const labels = { 1: 'Poor', 2: 'Somewhat Poor', 3: 'Okay', 4: 'Somewhat Happy', 5: 'Happy' };
     return labels[level];
   };
 
+  // Color coding for anxiety (green = low, yellow = medium, red = high)
   const getAnxietyColor = (level) => {
     if (level <= 3) return 'var(--success)';
     if (level <= 6) return 'var(--warning)';
     return 'var(--danger)';
   };
 
+  // Color coding for stress (green = low, yellow = medium, red = high)
   const getStressColor = (level) => {
     if (level <= 3) return 'var(--success)';
     if (level <= 6) return 'var(--warning)';
     return 'var(--danger)';
   };
 
+  // Color coding for mood (green = happy, yellow = okay, red = poor)
   const getMoodColor = (level) => {
     if (level >= 4) return 'var(--success)';
     if (level >= 3) return 'var(--warning)';
@@ -127,12 +136,12 @@ const MoodRating = () => {
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
-      {/* Rating Form */}
+      {/* Form to rate current mood with sliders */}
       <div className="mood-form-card">
         <h2>How are you feeling?</h2>
         <form onSubmit={handleSubmit}>
           
-          {/* ← ADD DATE PICKER HERE */}
+          {/* Date picker - allows backdating entries */}
           <div className="form-group" style={{ marginBottom: '32px' }}>
             <label className="form-label">Date:</label>
             <input
@@ -146,7 +155,7 @@ const MoodRating = () => {
             />
           </div>
 
-          {/* Anxiety Level */}
+          {/* Anxiety slider (1-10) */}
           <div className="mood-slider-group">
             <label className="mood-slider-label">
               Anxiety Level:
@@ -169,7 +178,7 @@ const MoodRating = () => {
             </div>
           </div>
 
-          {/* Stress Level */}
+          {/* Stress slider (1-10) */}
           <div className="mood-slider-group">
             <label className="mood-slider-label">
               Stress Level:
@@ -192,7 +201,7 @@ const MoodRating = () => {
             </div>
           </div>
 
-          {/* Overall Mood */}
+          {/* Overall mood slider (1-5) */}
           <div className="mood-slider-group">
             <label className="mood-slider-label">
               Overall Mood:
@@ -225,7 +234,7 @@ const MoodRating = () => {
         </form>
       </div>
 
-      {/* Mood Trends Graph */}
+      {/* Line chart showing mood trends over time */}
       {entries.length > 0 && (
         <div className="mood-graph-card">
           <h2>Mood Trends</h2>
@@ -280,7 +289,7 @@ const MoodRating = () => {
         </div>
       )}
 
-      {/* Past Ratings */}
+      {/* List of all past mood ratings */}
       <div className="mood-history-card">
         <h2>Past Ratings ({entries.length})</h2>
         
