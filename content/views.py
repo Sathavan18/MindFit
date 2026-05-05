@@ -1,3 +1,7 @@
+"""
+API views for article listing and personalised recommendations.
+Implements dual recommendation system using mood data and journal text analysis.
+"""
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -11,8 +15,13 @@ import re
 
 
 class ArticleListView(generics.ListAPIView):
+    """
+    API endpoint to retrieve all articles.
+    Used for browsing articles by category on the frontend.
+    """
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
+    # Must be logged in to view articles
     permission_classes = [IsAuthenticated]
 
 
@@ -20,55 +29,62 @@ class ArticleListView(generics.ListAPIView):
 @permission_classes([IsAuthenticated])
 def get_recommended_articles(request):
     """
-    Get article recommendations based on:
-    1. Keywords from recent journal entries (HIGHEST PRIORITY)
-    2. Mood rating triggers (SECOND PRIORITY - sorted by severity)
+    Get personalised article recommendations using a dual-trigger system.
     
-    Maximum 3 recommendations returned.
+    Recommendation logic:
+    1. Keyword-based (HIGHEST PRIORITY): Matches journal text against article keywords
+    2. Mood-based (SECOND PRIORITY): Matches mood ratings against article thresholds
+    
+    Prioritisation logic:
+    - Priority 1: Journal keyword matches (qualitative data)
+    - Priority 2-12: Mood threshold matches (quantitative data, sorted by severity)
+    
+    Returns a maximum of 3 recommendations ordered by priority.
     """
     user = request.user
     recommended_articles = []  # List of tuples: (article, priority, reason)
     
-    # 1. KEYWORD-BASED RECOMMENDATIONS (HIGHEST PRIORITY)
+    # Analyse recent journal entries for keyword matches
     try:
-        # Get recent journal entries (last 7 days)
+        # Get recent journal entries (last 7 days, most recent 5 entries)
         week_ago = timezone.now().date() - timedelta(days=7)
         recent_journals = JournalEntry.objects.filter(
             user=user,
-            date__gte=week_ago
-        ).order_by('-date')[:5]  # Last 5 entries
+            date__gte=week_ago).order_by('-date')[:5]
         
         if recent_journals:
-            # Combine all journal text
+            # Combine all journal text into single string for analysis
             journal_text = ' '.join([entry.content.lower() for entry in recent_journals])
             
-            # Get all articles with keywords
+            # Get all articles with trigger keywords defined
             articles_with_keywords = Article.objects.exclude(trigger_keywords='')
             
             for article in articles_with_keywords:
                 if not article.trigger_keywords:
                     continue
                 
-                # Split comma-separated keywords
+                # Split comma-separated keywords and make into lowercase, no whitespace
                 keywords = [kw.strip().lower() for kw in article.trigger_keywords.split(',') if kw.strip()]
                 
                 # Check if any keyword appears in journal text
                 for keyword in keywords:
                     # Use word boundary to match whole words only
+                    # This prevent partial matches like work in workout
                     pattern = r'\b' + re.escape(keyword) + r'\b'
                     if re.search(pattern, journal_text):
                         recommended_articles.append((
                             article,
-                            1,  # Priority 1 (highest)
+                            1,
                             f"Mentioned '{keyword}' in your journal"
                         ))
-                        break  # One keyword match is enough
+                        break  # One keyword match is enough per article
     
     except Exception as e:
         print(f"Error processing journal keywords: {e}")
     
-    # 2. MOOD-BASED RECOMMENDATIONS (SECOND PRIORITY)
+    # Mood Based Recommendations
     try:
+        # Get user's most recent mood rating
         recent_mood = MoodRating.objects.filter(user=user).order_by('-date').first()
         
         if recent_mood:
@@ -80,9 +96,10 @@ def get_recommended_articles(request):
                 if any(art[0].id == article.id for art in recommended_articles):
                     continue
                 
-                # Check anxiety trigger
+                # Check anxiety trigger threshold
                 if article.min_anxiety_trigger and recent_mood.anxiety_level >= article.min_anxiety_trigger:
                     # Priority based on how much above threshold
+                    # More above threshold, higher priority
                     severity = recent_mood.anxiety_level - article.min_anxiety_trigger
                     recommended_articles.append((
                         article,
@@ -91,7 +108,7 @@ def get_recommended_articles(request):
                     ))
                     continue  # Don't check other triggers for this article
                 
-                # Check stress trigger
+                # Check stress trigger threshold
                 if article.min_stress_trigger and recent_mood.stress_level >= article.min_stress_trigger:
                     severity = recent_mood.stress_level - article.min_stress_trigger
                     recommended_articles.append((
@@ -101,7 +118,7 @@ def get_recommended_articles(request):
                     ))
                     continue
                 
-                # Check mood trigger (low mood)
+                # Check mood trigger threshold
                 if article.max_mood_trigger and recent_mood.overall_mood <= article.max_mood_trigger:
                     severity = article.max_mood_trigger - recent_mood.overall_mood
                     recommended_articles.append((
@@ -113,19 +130,21 @@ def get_recommended_articles(request):
     except Exception as e:
         print(f"Error processing mood triggers: {e}")
     
-    # 3. SORT BY PRIORITY AND LIMIT TO 3
-    recommended_articles.sort(key=lambda x: x[1])  # Sort by priority (lower number = higher priority)
-    top_3 = recommended_articles[:3]  # Take top 3
+    # Sort by priority (lower number = higher priority)
+    recommended_articles.sort(key=lambda x: x[1])
+    # Take top 3 
+    top_3 = recommended_articles[:3]
     
-    # 4. PREPARE RESPONSE
+    # Prepare JSON response
     if top_3:
-        # Get just the article objects
+        # Extract article objects and reasons from tuples
         articles_to_return = [art[0] for art in top_3]
         reasons = {art[0].id: art[2] for art in top_3}
         
+        #Serialise articles to JSON
         serializer = ArticleSerializer(articles_to_return, many=True)
         
-        # Add recommendation reasons
+        # Add recommendation reason to each article
         articles_data = serializer.data
         for article in articles_data:
             article['recommendation_reason'] = reasons.get(article['id'], '')
@@ -135,6 +154,7 @@ def get_recommended_articles(request):
             'articles': articles_data
         })
     else:
+        # No recommendations found
         return Response({
             'count': 0,
             'articles': []
