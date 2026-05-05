@@ -1,4 +1,4 @@
-/* ==================== CSS VARIABLES ==================== */
+/*CSS VARIABLES*/
 
 :root {
   --bg: #0a0e27;
@@ -17,7 +17,7 @@
   --purple: #af52de;
 }
 
-/* ==================== GLOBAL STYLES ==================== */
+/*GLOBAL STYLES*/
 
 * {
   margin: 0;
@@ -34,7 +34,7 @@ body {
   line-height: 1.6;
 }
 
-/* ==================== LAYOUT ==================== */
+/*LAYOUT*/
 
 .page {
   min-height: 100vh;
@@ -64,7 +64,7 @@ body {
   margin: 0 auto;
 }
 
-/* ==================== TYPOGRAPHY ==================== */
+/*TYPOGRAPHY*/
 
 h1 {
   font-size: 40px;
@@ -97,7 +97,7 @@ p {
   color: var(--text);
 }
 
-/* ==================== BUTTONS ==================== */
+/*BUTTONS*/
 
 .btn {
   border: none;
@@ -199,7 +199,7 @@ p {
   width: 100%;
 }
 
-/* ==================== CARDS ==================== */
+/*CARDS*/
 
 .card {
   background: var(--surface);
@@ -222,7 +222,7 @@ p {
   margin-bottom: 20px;
 }
 
-/* ==================== FORMS ==================== */
+/*FORMS*/
 
 .form-group {
   margin-bottom: 20px;
@@ -293,7 +293,7 @@ p {
   box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
 }
 
-/* ==================== ALERTS ==================== */
+/*ALERTS*/
 
 .alert {
   padding: 16px 20px;
@@ -327,7 +327,7 @@ p {
   border: 1px solid rgba(255, 149, 0, 0.3);
 }
 
-/* ==================== TABLES ==================== */
+/*TABLES*/
 
 .table-container {
   overflow-x: auto;
@@ -371,7 +371,7 @@ p {
   border-bottom: none;
 }
 
-/* ==================== GRIDS ==================== */
+/*GRIDS*/
 
 .grid {
   display: grid;
@@ -403,7 +403,7 @@ p {
   gap: 24px;
 }
 
-/* ==================== SPACING UTILITIES ==================== */
+/*SPACING UTILITIES*/
 
 .mb-8 { margin-bottom: 8px; }
 .mb-12 { margin-bottom: 12px; }
@@ -424,7 +424,7 @@ p {
 .p-20 { padding: 20px; }
 .p-24 { padding: 24px; }
 
-/* ==================== TEXT UTILITIES ==================== */
+/*TEXT UTILITIES*/
 
 .text-center {
   text-align: center;
@@ -446,7 +446,7 @@ p {
   font-weight: 600;
 }
 
-/* ==================== FLEX UTILITIES ==================== */
+/*FLEX UTILITIES*/
 
 .flex {
   display: flex;
@@ -475,7 +475,7 @@ p {
 .gap-20 { gap: 20px; }
 .gap-24 { gap: 24px; }
 
-/* ==================== STAT CARDS (for Progress page) ==================== */
+/*STAT CARDS (for Progress page)*/
 
 .stat-card {
   background: var(--surface);
@@ -506,7 +506,7 @@ p {
   color: var(--muted);
 }
 
-/* ==================== STREAK CARDS ==================== */
+/*STREAK CARDS*/
 
 .streak-card {
   padding: 24px;
@@ -532,7 +532,7 @@ p {
   margin-bottom: 12px;
 }
 
-/* ==================== BADGE ==================== */
+/*BADGE*/
 
 .badge {
   display: inline-block;
@@ -564,7 +564,7 @@ p {
   color: var(--danger);
 }
 
-/* ==================== ANIMATIONS ==================== */
+/*ANIMATIONS*/
 
 .fade-up {
   animation: fadeUp 0.5s ease both;
@@ -581,7 +581,7 @@ p {
   }
 }
 
-/* ==================== NAVBAR ==================== */
+/*NAVBAR*/
 
 .navbar {
   background: var(--bg-secondary);
@@ -718,7 +718,7 @@ p {
   }
 }
 
-/* ==================== PROFILE PAGE ==================== */
+/*PROFILE PAGE*/
 
 .profile-summary {
   display: grid;
@@ -819,7 +819,7 @@ p {
   border-top: 1px solid var(--border);
 }
 
-/* ==================== PROGRESS PAGE ==================== */
+/*PROGRESS PAGE*/
 
 .progress-section {
   margin-bottom: 48px;
@@ -955,7 +955,7 @@ p {
   color: var(--muted);
 }
 
-/* ==================== WEIGHT TRACKING PAGE ==================== */
+/*WEIGHT TRACKING PAGE*/
 
 .weight-target-banner {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
@@ -1073,7 +1073,7 @@ p {
   transform-origin: bottom !important;
 }
 
-/* ==================== MOOD RATING PAGE ==================== */
+/*MOOD RATING PAGE*/
 
 .mood-form-card {
   background: var(--surface);
@@ -1249,7 +1249,7 @@ p {
   color: var(--muted);
 }
 
-/* ==================== JOURNAL PAGE ==================== */
+/*JOURNAL PAGE*/
 
 .journal-entry-item {
   background: rgba(255, 255, 255, 0.03);
@@ -1319,7 +1319,7 @@ p {
   border-top: 1px solid var(--border);
 }
 
-/* ==================== MEDITATION PAGE ==================== */
+/*MEDITATION PAGE*/
 
 .meditation-streak-banner {
   background: linear-gradient(135deg, var(--warning) 0%, #ff9500 100%);
@@ -1528,7 +1528,7 @@ p {
   font-weight: 600;
 }
 
-/* ==================== ARTICLES PAGE ==================== */
+/*ARTICLES PAGE*/
 
 .articles-recommendations {
   margin-bottom: 48px;
@@ -1758,7 +1758,7 @@ p {
   color: var(--primary);
 }
 
-/* ==================== LOGIN/REGISTER PAGES ==================== */
+/*LOGIN/REGISTER PAGES*/
 
 .auth-container {
   min-height: 100vh;
@@ -1899,7 +1899,7 @@ p {
   }
 }
 
-/* ==================== INSIGHTS PAGE ==================== */
+/*INSIGHTS PAGE*/
 
 .insights-header {
   margin-bottom: 48px;
@@ -2102,7 +2102,7 @@ p {
   }
 }
 
-/* ==================== ICON STYLES ==================== */
+/*ICON STYLES*/
 
 /* Inline icons (for headings) */
 .inline-icon {
@@ -2142,7 +2142,7 @@ p {
   color: var(--success);
 }
 
-/* ==================== DASHBOARD ==================== */
+/*DASHBOARD*/
 
 .dashboard-header {
   text-align: center;
@@ -2254,7 +2254,7 @@ p {
   }
 }
 
-/* ==================== RESPONSIVE ==================== */
+/*RESPONSIVE*/
 
 @media (max-width: 768px) {
   .page,
