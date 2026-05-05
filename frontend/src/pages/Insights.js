@@ -4,6 +4,7 @@ import {
   LineChart, Line, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, 
   Tooltip, Legend, ResponsiveContainer, ComposedChart 
 } from 'recharts';
+import { TrendingDown, Wind, Frown, BookOpen, Meh, BarChart3, Heart } from 'lucide-react';
 
 const Insights = () => {
   const [data, setData] = useState({
@@ -42,7 +43,6 @@ const Insights = () => {
     }
   };
 
-  // Calculate combined timeline data
   const getCombinedTimelineData = () => {
     const allDates = new Set([
       ...data.weight.map(e => e.date),
@@ -63,7 +63,6 @@ const Insights = () => {
     });
   };
 
-  // Calculate calorie-mood correlation
   const getCalorieMoodData = () => {
     return data.weight.map(entry => {
       const moodEntry = data.mood.find(m => m.date === entry.date);
@@ -78,7 +77,6 @@ const Insights = () => {
     }).filter(Boolean);
   };
 
-  // Calculate meditation impact
   const getMeditationImpact = () => {
     const daysWithMeditation = new Set(data.meditation.map(m => m.date));
     
@@ -112,7 +110,6 @@ const Insights = () => {
     return { avgWithMeditation, avgWithoutMeditation };
   };
 
-  // Calculate journal impact
   const getJournalImpact = () => {
     const daysWithJournal = new Set(data.journal.map(j => j.date));
     
@@ -138,13 +135,11 @@ const Insights = () => {
     return { avgWithJournal, avgWithoutJournal };
   };
 
-  // Detect patterns
   const detectPatterns = () => {
     const patterns = [];
     const calorieMoodData = getCalorieMoodData();
 
     if (calorieMoodData.length >= 5) {
-      // Check if high stress correlates with high calories
       const highStressDays = calorieMoodData.filter(d => d.stress >= 7);
       const lowStressDays = calorieMoodData.filter(d => d.stress <= 4);
 
@@ -155,7 +150,7 @@ const Insights = () => {
 
         if (Math.abs(diff) > 200) {
           patterns.push({
-            icon: diff > 0 ? '😰' : '😌',
+            icon: diff > 0 ? <Frown size={20} /> : <Heart size={20} />,
             title: diff > 0 ? 'Stress Eating Pattern Detected' : 'Healthy Stress Response',
             description: diff > 0
               ? `On high-stress days (7+), you consume ${Math.round(diff)} more calories on average than low-stress days.`
@@ -165,21 +160,19 @@ const Insights = () => {
       }
     }
 
-    // Check meditation impact
     const { avgWithMeditation, avgWithoutMeditation } = getMeditationImpact();
     if (avgWithMeditation && avgWithoutMeditation) {
       const stressReduction = avgWithoutMeditation.stress - avgWithMeditation.stress;
       
       if (stressReduction > 1) {
         patterns.push({
-          icon: '🧘',
+          icon: <Wind size={20} />,
           title: 'Meditation Reduces Stress',
           description: `On days you meditate, your stress level is ${stressReduction.toFixed(1)} points lower on average.`,
         });
       }
     }
 
-    // Check weight-mood correlation
     const timelineData = getCombinedTimelineData().filter(d => d.weight && d.mood);
     if (timelineData.length >= 7) {
       const recentWeek = timelineData.slice(-7);
@@ -188,7 +181,7 @@ const Insights = () => {
 
       if (avgMood >= 4 && weightChange < -0.5) {
         patterns.push({
-          icon: '📉',
+          icon: <TrendingDown size={20} />,
           title: 'Positive Mood Supports Weight Loss',
           description: `This week with an average mood of ${avgMood.toFixed(1)}/5, you've lost ${Math.abs(weightChange).toFixed(1)}kg.`,
         });
@@ -198,44 +191,40 @@ const Insights = () => {
     return patterns;
   };
 
-  // Generate recommendations
   const getRecommendations = () => {
     const recommendations = [];
     const { avgWithMeditation, avgWithoutMeditation } = getMeditationImpact();
 
-    // Recommend meditation if it helps
     if (avgWithMeditation && avgWithoutMeditation) {
       const stressReduction = avgWithoutMeditation.stress - avgWithMeditation.stress;
       if (stressReduction > 1 && data.meditation.length < data.mood.length * 0.5) {
         recommendations.push({
-          icon: '🧘',
+          icon: <Wind size={20} />,
           title: 'Meditate More Often',
           description: `Meditation reduces your stress by ${stressReduction.toFixed(1)} points. Try to meditate at least 4-5 days per week.`,
         });
       }
     }
 
-    // Recommend journaling if user doesn't do it often
     const { avgWithJournal, avgWithoutJournal } = getJournalImpact();
     if (avgWithJournal && avgWithoutJournal) {
       const moodImprovement = parseFloat(avgWithJournal) - parseFloat(avgWithoutJournal);
       if (moodImprovement > 0.5 && data.journal.length < data.mood.length * 0.5) {
         recommendations.push({
-          icon: '📝',
+          icon: <BookOpen size={20} />,
           title: 'Journal Regularly',
           description: `Journaling improves your mood by ${moodImprovement.toFixed(1)} points. Try journaling 3-4 times per week.`,
         });
       }
     }
 
-    // Check if low mood correlates with weight gain
     const recentMood = data.mood.slice(-7);
     const recentWeight = data.weight.slice(-7);
     if (recentMood.length >= 5 && recentWeight.length >= 5) {
       const avgRecentMood = recentMood.reduce((sum, m) => sum + m.overall_mood, 0) / recentMood.length;
       if (avgRecentMood < 3) {
         recommendations.push({
-          icon: '💚',
+          icon: <Heart size={20} />,
           title: 'Focus on Mental Wellness',
           description: `Your mood has been lower recently (${avgRecentMood.toFixed(1)}/5). Prioritize activities that boost your mood - exercise, social time, or hobbies you enjoy.`,
         });
@@ -266,7 +255,7 @@ const Insights = () => {
         </div>
 
         <div className="insights-empty-state">
-          <span style={{ fontSize: '64px', marginBottom: '16px', display: 'block' }}>📊</span>
+          <BarChart3 size={64} style={{ marginBottom: '16px', color: 'var(--primary)' }} />
           <h3>Not Enough Data Yet</h3>
           <p>Keep tracking your weight, mood, and activities for at least 5 days to see personalized insights.</p>
           <p style={{ marginTop: '16px', fontSize: '14px' }}>
@@ -293,7 +282,6 @@ const Insights = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      {/* Combined Timeline */}
       <div className="insights-section">
         <h2>Mind-Body Connection Over Time</h2>
         <div className="insights-chart-card">
@@ -361,7 +349,6 @@ const Insights = () => {
         </div>
       </div>
 
-      {/* Calorie-Mood Correlation */}
       {calorieMoodData.length >= 5 && (
         <div className="insights-section">
           <h2>Eating Patterns & Mental State</h2>
@@ -406,14 +393,13 @@ const Insights = () => {
         </div>
       )}
 
-      {/* Activity Impact Stats */}
       <div className="insights-section">
         <h2>Activity Impact Analysis</h2>
         <div className="insights-grid">
           {avgWithMeditation && avgWithoutMeditation && (
             <>
               <div className="insights-stat-card">
-                <span className="insights-stat-icon">🧘</span>
+                <Wind size={24} className="insights-stat-icon" style={{ color: 'var(--success)' }} />
                 <div className="insights-stat-title">Avg Stress (With Meditation)</div>
                 <div className="insights-stat-value" style={{ color: 'var(--success)' }}>
                   {avgWithMeditation.stress}/10
@@ -424,7 +410,7 @@ const Insights = () => {
               </div>
 
               <div className="insights-stat-card">
-                <span className="insights-stat-icon">😓</span>
+                <Frown size={24} className="insights-stat-icon" style={{ color: 'var(--danger)' }} />
                 <div className="insights-stat-title">Avg Stress (Without Meditation)</div>
                 <div className="insights-stat-value" style={{ color: 'var(--danger)' }}>
                   {avgWithoutMeditation.stress}/10
@@ -435,7 +421,7 @@ const Insights = () => {
               </div>
 
               <div className="insights-stat-card">
-                <span className="insights-stat-icon">📉</span>
+                <TrendingDown size={24} className="insights-stat-icon" style={{ color: 'var(--primary)' }} />
                 <div className="insights-stat-title">Stress Reduction</div>
                 <div className="insights-stat-value" style={{ color: 'var(--primary)' }}>
                   {(avgWithoutMeditation.stress - avgWithMeditation.stress).toFixed(1)}
@@ -450,7 +436,7 @@ const Insights = () => {
           {avgWithJournal && avgWithoutJournal && (
             <>
               <div className="insights-stat-card">
-                <span className="insights-stat-icon">📝</span>
+                <BookOpen size={24} className="insights-stat-icon" style={{ color: 'var(--success)' }} />
                 <div className="insights-stat-title">Avg Mood (With Journaling)</div>
                 <div className="insights-stat-value" style={{ color: 'var(--success)' }}>
                   {avgWithJournal}/5
@@ -461,7 +447,7 @@ const Insights = () => {
               </div>
 
               <div className="insights-stat-card">
-                <span className="insights-stat-icon">😐</span>
+                <Meh size={24} className="insights-stat-icon" style={{ color: 'var(--text-secondary)' }} />
                 <div className="insights-stat-title">Avg Mood (Without Journaling)</div>
                 <div className="insights-stat-value">
                   {avgWithoutJournal}/5
@@ -475,7 +461,6 @@ const Insights = () => {
         </div>
       </div>
 
-      {/* Detected Patterns */}
       {patterns.length > 0 && (
         <div className="insights-section">
           <h2>Detected Patterns</h2>
@@ -493,7 +478,6 @@ const Insights = () => {
         </div>
       )}
 
-      {/* Recommendations */}
       {recommendations.length > 0 && (
         <div className="insights-section">
           <h2>Personalized Recommendations</h2>

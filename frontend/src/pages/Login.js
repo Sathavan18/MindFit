@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Activity } from 'lucide-react';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -38,7 +39,9 @@ const Login = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-logo">💪</div>
+          <div className="auth-logo">
+            <Activity size={40} style={{ color: 'var(--primary)' }} />
+          </div>
           <h1 className="auth-title">Welcome Back</h1>
           <p className="auth-subtitle">Sign in to continue your wellness journey</p>
         </div>

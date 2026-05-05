@@ -2,16 +2,15 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { Activity } from 'lucide-react';
 
 const RegisterWithProfile = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    // Step 1: Account
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
-    // Step 2: Profile
     age: '',
     gender: 'male',
     weight: '',
@@ -37,12 +36,10 @@ const RegisterWithProfile = () => {
       [name]: value,
     });
 
-    // Check username availability
     if (name === 'username' && value.length >= 3) {
       checkUsernameAvailability(value);
     }
 
-    // Check email availability
     if (name === 'email' && value.includes('@')) {
       checkEmailAvailability(value);
     }
@@ -126,7 +123,6 @@ const RegisterWithProfile = () => {
     setLoading(true);
 
     try {
-      // Calculate BMR and target calories
       const bmr = calculateBMR(
         parseFloat(formData.weight),
         parseInt(formData.height),
@@ -140,14 +136,12 @@ const RegisterWithProfile = () => {
         formData.goal
       );
 
-      // Register user
       await register({
         username: formData.username,
         email: formData.email,
         password: formData.password
       });
 
-      // Create profile
       await api.post('accounts/profile/', {
         age: parseInt(formData.age),
         gender: formData.gender,
@@ -171,14 +165,15 @@ const RegisterWithProfile = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-logo">💪</div>
+          <div className="auth-logo">
+            <Activity size={40} style={{ color: 'var(--primary)' }} />
+          </div>
           <h1 className="auth-title">Create Account</h1>
           <p className="auth-subtitle">
             {step === 1 ? 'Start your wellness journey' : 'Complete your profile'}
           </p>
         </div>
 
-        {/* Progress Steps */}
         <div className="auth-steps">
           <div className={`auth-step ${step >= 1 ? 'auth-step-active' : ''}`}></div>
           <div className={`auth-step ${step >= 2 ? 'auth-step-active' : ''}`}></div>
@@ -187,7 +182,6 @@ const RegisterWithProfile = () => {
         {error && <div className="alert alert-error">{error}</div>}
 
         {step === 1 ? (
-          // Step 1: Account Information
           <form onSubmit={handleStep1Submit} className="auth-form">
             <div className="form-group">
               <label className="form-label">Username</label>
@@ -262,7 +256,6 @@ const RegisterWithProfile = () => {
             </button>
           </form>
         ) : (
-          // Step 2: Profile Information
           <form onSubmit={handleStep2Submit} className="auth-form">
             <div className="grid-2">
               <div className="form-group">

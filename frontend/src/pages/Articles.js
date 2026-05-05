@@ -1,56 +1,33 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { Lightbulb } from 'lucide-react';
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
   const [recommendedArticles, setRecommendedArticles] = useState([]);
-  const [latestMoodRating, setLatestMoodRating] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
 
   useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const fetchData = async () => {
-    try {
-      const articlesResponse = await api.get('content/articles/');
-      setArticles(articlesResponse.data);
+    const fetchData = async () => {
+      try {
+        const articlesResponse = await api.get('content/articles/');
+        setArticles(articlesResponse.data);
 
-      const moodResponse = await api.get('mental/mood/');
-      if (moodResponse.data.length > 0) {
-        const latest = moodResponse.data[0];
-        setLatestMoodRating(latest);
+        const recommendedResponse = await api.get('content/recommended/');
+        setRecommendedArticles(recommendedResponse.data.articles || []);
         
-        const recommended = getRecommendedArticles(articlesResponse.data, latest);
-        setRecommendedArticles(recommended);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading articles:', error);
+        setError('Failed to load articles');
+        setLoading(false);
       }
-      
-      setLoading(false);
-    } catch (error) {
-      setError('Failed to load articles');
-      setLoading(false);
-    }
-  };
+    };
 
-  const getRecommendedArticles = (allArticles, mood) => {
-    return allArticles.filter(article => {
-      if (article.min_anxiety_trigger && mood.anxiety_level >= article.min_anxiety_trigger) {
-        return true;
-      }
-      
-      if (article.min_stress_trigger && mood.stress_level >= article.min_stress_trigger) {
-        return true;
-      }
-      
-      if (article.max_mood_trigger && mood.overall_mood <= article.max_mood_trigger) {
-        return true;
-      }
-      
-      return false;
-    });
-  };
+    fetchData();
+  }, []);
 
   const categories = [
     { value: 'all', label: 'All Articles' },
@@ -83,14 +60,14 @@ const Articles = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      {/* Recommended Articles Section */}
       {recommendedArticles.length > 0 && (
         <div className="articles-recommendations">
           <div className="articles-recommendations-banner">
-            <h2>💡 Recommended For You</h2>
-            <p>
-              Based on your latest mood rating from {latestMoodRating && new Date(latestMoodRating.date).toLocaleDateString()}
-            </p>
+            <h2>
+              <Lightbulb className="inline-icon" />
+              Recommended For You
+            </h2>
+            <p>Based on your recent mood and journal entries</p>
           </div>
 
           <div className="articles-grid">
@@ -100,6 +77,13 @@ const Articles = () => {
                   <span className={`article-category-badge article-category-${article.category}`}>
                     {article.category}
                   </span>
+
+                  {article.recommendation_reason && (
+                    <div className="article-recommendation-reason">
+                      <Lightbulb size={16} className="recommendation-icon" />
+                      {article.recommendation_reason}
+                    </div>
+                  )}
                   
                   <h3 className="article-title">{article.title}</h3>
                   
@@ -122,7 +106,6 @@ const Articles = () => {
         </div>
       )}
 
-      {/* Category Filter */}
       <div className="articles-categories">
         <h2>Browse by Category</h2>
         <div className="articles-category-buttons">
@@ -138,7 +121,6 @@ const Articles = () => {
         </div>
       </div>
 
-      {/* All Articles */}
       <div>
         <h2 className="mb-24">
           {activeCategory === 'all' ? 'All Articles' : `${categories.find(c => c.value === activeCategory)?.label} Articles`} ({filteredArticles.length})

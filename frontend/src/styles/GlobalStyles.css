@@ -1738,6 +1738,26 @@ p {
   }
 }
 
+.article-recommendation-reason {
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.1) 0%, rgba(0, 113, 227, 0.05) 100%);
+  border-left: 3px solid var(--primary);
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--primary);
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* White lightbulb in heading, blue elsewhere */
+.articles-recommendations-banner .inline-icon {
+  color: white;
+}
+
+.recommendation-icon {
+  color: var(--primary);
+}
+
 /* ==================== LOGIN/REGISTER PAGES ==================== */
 
 .auth-container {
@@ -2080,6 +2100,46 @@ p {
   .insights-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==================== ICON STYLES ==================== */
+
+/* Inline icons (for headings) */
+.inline-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+  color: var(--primary);
+  width: 28px;
+  height: 28px;
+}
+
+/* Navbar icons */
+.nav-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+/* Recommendation reason icon */
+.recommendation-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+  color: var(--primary);
+}
+
+/* Icon colors for different features */
+.icon-insights {
+  color: #fbbf24;  /* Gold for insights/lightbulb */
+}
+
+.icon-primary {
+  color: var(--primary);
+}
+
+.icon-success {
+  color: var(--success);
 }
 
 /* ==================== DASHBOARD ==================== */

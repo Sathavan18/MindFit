@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
+import { Flame, Volume2, VolumeX, CloudRain, TreePine, Wind } from 'lucide-react';
 
 const Meditation = () => {
   const [sessions, setSessions] = useState([]);
@@ -14,18 +15,16 @@ const Meditation = () => {
   const audioRef = useRef(null);
 
   const soundOptions = [
-    { id: 'none', label: 'Silent', icon: '🔇', file: null },
-    { id: 'rain', label: 'Rain', icon: '🌧️', file: '/sounds/meditation/rain.mp3' },
-    { id: 'nature', label: 'Nature', icon: '🌲', file: '/sounds/meditation/nature.mp3' },
-    { id: 'whitenoise', label: 'White Noise', icon: '💨', file: '/sounds/meditation/whitenoise.mp3' },
+    { id: 'none', label: 'Silent', icon: <VolumeX size={20} />, file: null },
+    { id: 'rain', label: 'Rain', icon: <CloudRain size={20} />, file: '/sounds/meditation/rain.mp3' },
+    { id: 'nature', label: 'Nature', icon: <TreePine size={20} />, file: '/sounds/meditation/nature.mp3' },
+    { id: 'whitenoise', label: 'White Noise', icon: <Wind size={20} />, file: '/sounds/meditation/whitenoise.mp3' },
   ];
 
   useEffect(() => {
     fetchSessions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Timer logic
   useEffect(() => {
     let interval = null;
 
@@ -41,18 +40,14 @@ const Meditation = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, timeLeft]);
 
   const fetchSessions = async () => {
-    console.log('Fetching meditation sessions...');
     try {
       const response = await api.get('mental/meditation/');
-      console.log('Response:', response.data);
       setSessions(response.data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching sessions:', error);
       setError('Failed to load meditation sessions');
       setLoading(false);
     }
@@ -64,7 +59,6 @@ const Meditation = () => {
     setError('');
     setSuccess('');
     
-    // Start audio if selected
     if (selectedSound !== 'none' && audioRef.current) {
       const sound = soundOptions.find(s => s.id === selectedSound);
       if (sound?.file) {
@@ -106,10 +100,9 @@ const Meditation = () => {
       });
       
       setSessions([response.data, ...sessions]);
-      setSuccess(`Great job! ${duration} minute meditation completed! 🧘`);
+      setSuccess(`Great job! ${duration} minute meditation completed!`);
       setTimeLeft(null);
       
-      // Stop audio
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
@@ -171,27 +164,22 @@ const Meditation = () => {
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
-      {/* Streak Display */}
       <div className="meditation-streak-banner">
         <div className="meditation-streak-content">
-          <span className="meditation-streak-icon">🔥</span>
+          <Flame size={32} className="meditation-streak-icon" style={{ color: '#f59e0b' }} />
           <p className="meditation-streak-text">
             {currentStreak} Day Streak
           </p>
         </div>
       </div>
 
-      {/* Audio element (hidden) */}
       <audio ref={audioRef} loop />
 
-      {/* Timer Section */}
       <div className="meditation-timer-card">
         <h2>Meditation Timer</h2>
         
         {timeLeft === null ? (
-          // Setup view
           <div className="meditation-setup">
-            {/* Sound Selector */}
             <div className="meditation-sound-selector">
               <label className="meditation-sound-label">Choose Your Sound:</label>
               <div className="meditation-sound-options">
@@ -209,11 +197,9 @@ const Meditation = () => {
               </div>
             </div>
 
-            {/* Duration Selector */}
             <div className="meditation-duration-selector">
               <label className="meditation-duration-label">Duration:</label>
               
-              {/* Quick Select Buttons */}
               <div className="meditation-quick-select">
                 {[3, 5, 10, 15, 20, 30].map((mins) => (
                   <button
@@ -227,7 +213,6 @@ const Meditation = () => {
                 ))}
               </div>
               
-              {/* Custom Input */}
               <div className="meditation-custom-input">
                 <label className="form-label">Or enter custom duration:</label>
                 <input
@@ -252,7 +237,6 @@ const Meditation = () => {
             </button>
           </div>
         ) : (
-          // Timer view
           <>
             <div className={`meditation-timer-display ${timeLeft <= 60 ? 'meditation-timer-warning' : 'meditation-timer-active'}`}>
               {formatTime(timeLeft)}
@@ -286,7 +270,6 @@ const Meditation = () => {
         )}
       </div>
 
-      {/* Session History */}
       <div className="meditation-history-card">
         <h2>Session History ({sessions.length})</h2>
         

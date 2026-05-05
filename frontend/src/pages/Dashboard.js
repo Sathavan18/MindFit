@@ -15,7 +15,7 @@ const Dashboard = () => {
       image: '/images/dashboard/profile.jpg',
     },
     {
-      id: 'insights',  // ← ADD THIS
+      id: 'insights',  
       title: 'Insights',
       description: 'Discover connections between your physical and mental health',
       path: '/insights',

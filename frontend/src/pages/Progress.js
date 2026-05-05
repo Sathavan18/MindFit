@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { Flame, Star, Sparkles, Moon } from 'lucide-react';
 
 const Progress = () => {
   const [stats, setStats] = useState({
@@ -71,10 +72,10 @@ const Progress = () => {
   };
 
   const getStreakIcon = (streak) => {
-    if (streak >= 7) return '🔥';
-    if (streak >= 3) return '⭐';
-    if (streak >= 1) return '✨';
-    return '💤';
+    if (streak >= 7) return <Flame size={32} style={{ color: '#f59e0b' }} />;
+    if (streak >= 3) return <Star size={32} style={{ color: '#fbbf24' }} />;
+    if (streak >= 1) return <Sparkles size={32} style={{ color: '#60a5fa' }} />;
+    return <Moon size={32} style={{ color: '#9ca3af' }} />;
   };
 
   if (loading) {
@@ -113,7 +114,6 @@ const Progress = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      {/* Overall Stats */}
       <div className="progress-section">
         <h2>Overall Activity</h2>
         <div className="progress-overall-stats">
@@ -129,12 +129,13 @@ const Progress = () => {
         </div>
       </div>
 
-      {/* Current Streaks */}
       <div className="progress-section">
-        <h2>Current Streaks 🔥</h2>
+        <h2>
+          <Flame className="inline-icon" style={{ color: '#f59e0b' }} />
+          Current Streaks
+        </h2>
         <div className="progress-streaks-grid">
           
-          {/* Weight Tracking Streak */}
           <div className={`progress-streak-card ${weightStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(weightStreak)}</span>
             <div className="progress-streak-number">{weightStreak}</div>
@@ -144,7 +145,6 @@ const Progress = () => {
             </div>
           </div>
 
-          {/* Mood Rating Streak */}
           <div className={`progress-streak-card ${moodStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(moodStreak)}</span>
             <div className="progress-streak-number">{moodStreak}</div>
@@ -154,7 +154,6 @@ const Progress = () => {
             </div>
           </div>
 
-          {/* Meditation Streak */}
           <div className={`progress-streak-card ${meditationStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(meditationStreak)}</span>
             <div className="progress-streak-number">{meditationStreak}</div>
@@ -164,7 +163,6 @@ const Progress = () => {
             </div>
           </div>
 
-          {/* Journal Streak */}
           <div className={`progress-streak-card ${journalStreak >= 3 ? 'progress-streak-card-active' : ''}`}>
             <span className="progress-streak-icon">{getStreakIcon(journalStreak)}</span>
             <div className="progress-streak-number">{journalStreak}</div>
@@ -177,7 +175,6 @@ const Progress = () => {
         </div>
       </div>
 
-      {/* All-Time Activity */}
       <div className="progress-section">
         <h2>All-Time Activity</h2>
         <div className="progress-activity-grid">
