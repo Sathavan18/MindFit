@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Activity } from 'lucide-react';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -37,14 +38,18 @@ const Login = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
+        {/* Header with logo and title */}
         <div className="auth-header">
-          <div className="auth-logo">💪</div>
+          <div className="auth-logo">
+            <Activity size={40} style={{ color: 'var(--primary)' }} />
+          </div>
           <h1 className="auth-title">Welcome Back</h1>
           <p className="auth-subtitle">Sign in to continue your wellness journey</p>
         </div>
 
         {error && <div className="alert alert-error">{error}</div>}
 
+        {/* Login form */}
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label className="form-label">Username</label>
@@ -81,6 +86,7 @@ const Login = () => {
           </button>
         </form>
 
+        {/* Link to registration page */}
         <div className="auth-footer">
           Don't have an account?{' '}
           <Link to="/register" className="auth-link">

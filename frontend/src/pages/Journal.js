@@ -12,6 +12,7 @@ const Journal = () => {
   const [success, setSuccess] = useState('');
   const [expandedEntry, setExpandedEntry] = useState(null);
 
+  // Fetch all journal entries on component mount
   useEffect(() => {
     fetchEntries();
   }, []);
@@ -45,6 +46,7 @@ const Journal = () => {
         content: formData.content,
       });
 
+      // Add new entry to top of list
       setEntries([response.data, ...entries]);
       setFormData({ content: '' });
       setSuccess('Journal entry saved!');
@@ -55,6 +57,7 @@ const Journal = () => {
     }
   };
 
+  // Toggle between collapsed preview and full entry view
   const toggleExpand = (id) => {
     setExpandedEntry(expandedEntry === id ? null : id);
   };
@@ -76,7 +79,7 @@ const Journal = () => {
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
-      {/* New Entry Form */}
+      {/* Form to write new journal entry */}
       <div className="journal-form-card">
         <h2>Write New Entry</h2>
         <form onSubmit={handleSubmit}>
@@ -107,7 +110,7 @@ const Journal = () => {
         </form>
       </div>
 
-      {/* Past Entries */}
+      {/* List of past journal entries with expand/collapse */}
       <div className="journal-entries-card">
         <h2>Past Entries ({entries.length})</h2>
         
@@ -119,7 +122,8 @@ const Journal = () => {
           <div className="journal-entries-grid">
             {entries.map((entry) => {
               const isExpanded = expandedEntry === entry.id;
-              const preview = entry.content.split('\n')[0]; // Get first line
+              // Create preview from first line (max 100 chars)
+              const preview = entry.content.split('\n')[0];
               const previewText = preview.length > 100 ? preview.substring(0, 100) + '...' : preview;
               
               return (
@@ -143,7 +147,7 @@ const Journal = () => {
                   </div>
                   
                   {!isExpanded ? (
-                    // Collapsed view - show preview
+                    // Collapsed view - show preview only
                     <>
                       <div className="journal-entry-preview">
                         {previewText}

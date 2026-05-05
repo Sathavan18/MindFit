@@ -6,6 +6,7 @@ const Dashboard = () => {
   const username = localStorage.getItem('username') || 'User';
   const [hoveredCard, setHoveredCard] = useState(null);
 
+  // All available features with images and descriptions
   const features = [
     {
       id: 'profile',
@@ -15,7 +16,7 @@ const Dashboard = () => {
       image: '/images/dashboard/profile.jpg',
     },
     {
-      id: 'insights',  // ← ADD THIS
+      id: 'insights',  
       title: 'Insights',
       description: 'Discover connections between your physical and mental health',
       path: '/insights',
@@ -67,11 +68,13 @@ const Dashboard = () => {
 
   return (
     <div className="page-container">
+      {/* Welcome header with username */}
       <div className="dashboard-header">
         <h1>Welcome back, {String(username)}</h1>
         <p className="dashboard-subtitle">Choose a feature to continue your wellness journey</p>
       </div>
 
+      {/* Grid of feature cards with hover effects */}
       <div className="dashboard-grid">
         {features.map((feature) => (
           <div
@@ -81,17 +84,21 @@ const Dashboard = () => {
             onMouseEnter={() => setHoveredCard(feature.id)}
             onMouseLeave={() => setHoveredCard(null)}
           >
+            {/* Background image with blur effect on hover */}
             <div 
               className="feature-card-background"
               style={{
                 backgroundImage: `url(${feature.image})`,
+                // Increase blur and darken on hover to make text more readable
                 filter: hoveredCard === feature.id ? 'blur(8px) brightness(0.4)' : 'blur(0px) brightness(0.6)',
               }}
             />
             
+            {/* Card content overlay */}
             <div className="feature-card-content">
               <h3 className="feature-title">{feature.title}</h3>
               
+              {/* Show description only when card is hovered */}
               {hoveredCard === feature.id && (
                 <p className="feature-description fade-up">
                   {feature.description}

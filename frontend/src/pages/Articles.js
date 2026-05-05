@@ -1,57 +1,38 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { Lightbulb } from 'lucide-react';
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
   const [recommendedArticles, setRecommendedArticles] = useState([]);
-  const [latestMoodRating, setLatestMoodRating] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
 
+  // Fetch all articles and personalized recommendations on component mount
   useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const fetchData = async () => {
-    try {
-      const articlesResponse = await api.get('content/articles/');
-      setArticles(articlesResponse.data);
+    const fetchData = async () => {
+      try {
+        // Get all available articles
+        const articlesResponse = await api.get('content/articles/');
+        setArticles(articlesResponse.data);
 
-      const moodResponse = await api.get('mental/mood/');
-      if (moodResponse.data.length > 0) {
-        const latest = moodResponse.data[0];
-        setLatestMoodRating(latest);
+        // Get personalized recommendations based on mood and journal keywords
+        const recommendedResponse = await api.get('content/recommended/');
+        setRecommendedArticles(recommendedResponse.data.articles || []);
         
-        const recommended = getRecommendedArticles(articlesResponse.data, latest);
-        setRecommendedArticles(recommended);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading articles:', error);
+        setError('Failed to load articles');
+        setLoading(false);
       }
-      
-      setLoading(false);
-    } catch (error) {
-      setError('Failed to load articles');
-      setLoading(false);
-    }
-  };
+    };
 
-  const getRecommendedArticles = (allArticles, mood) => {
-    return allArticles.filter(article => {
-      if (article.min_anxiety_trigger && mood.anxiety_level >= article.min_anxiety_trigger) {
-        return true;
-      }
-      
-      if (article.min_stress_trigger && mood.stress_level >= article.min_stress_trigger) {
-        return true;
-      }
-      
-      if (article.max_mood_trigger && mood.overall_mood <= article.max_mood_trigger) {
-        return true;
-      }
-      
-      return false;
-    });
-  };
+    fetchData();
+  }, []);
 
+  // Available article categories for filtering
   const categories = [
     { value: 'all', label: 'All Articles' },
     { value: 'anxiety', label: 'Anxiety' },
@@ -63,6 +44,7 @@ const Articles = () => {
     { value: 'mindfulness', label: 'Mindfulness' },
   ];
 
+  // Filter articles by selected category
   const filteredArticles = activeCategory === 'all' 
     ? articles 
     : articles.filter(article => article.category === activeCategory);
@@ -83,16 +65,18 @@ const Articles = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      {/* Recommended Articles Section */}
+      {/* Personalized recommendations section (shown only if there are recommendations) */}
       {recommendedArticles.length > 0 && (
         <div className="articles-recommendations">
           <div className="articles-recommendations-banner">
-            <h2>💡 Recommended For You</h2>
-            <p>
-              Based on your latest mood rating from {latestMoodRating && new Date(latestMoodRating.date).toLocaleDateString()}
-            </p>
+            <h2>
+              <Lightbulb className="inline-icon" />
+              Recommended For You
+            </h2>
+            <p>Based on your recent mood and journal entries</p>
           </div>
 
+          {/* Grid of recommended articles with special highlighting */}
           <div className="articles-grid">
             {recommendedArticles.map((article) => (
               <div key={article.id} className="article-card article-card-recommended">
@@ -100,6 +84,14 @@ const Articles = () => {
                   <span className={`article-category-badge article-category-${article.category}`}>
                     {article.category}
                   </span>
+
+                  {/* Show why this article was recommended (from backend logic) */}
+                  {article.recommendation_reason && (
+                    <div className="article-recommendation-reason">
+                      <Lightbulb size={16} className="recommendation-icon" />
+                      {article.recommendation_reason}
+                    </div>
+                  )}
                   
                   <h3 className="article-title">{article.title}</h3>
                   
@@ -107,6 +99,7 @@ const Articles = () => {
                     <p className="article-description">{article.description}</p>
                   )}
                   
+                  {/* External link to article (opens in new tab) */}
                   <a
                     href={article.url}
                     target="_blank"
@@ -122,7 +115,7 @@ const Articles = () => {
         </div>
       )}
 
-      {/* Category Filter */}
+      {/* Category filter buttons */}
       <div className="articles-categories">
         <h2>Browse by Category</h2>
         <div className="articles-category-buttons">
@@ -138,7 +131,7 @@ const Articles = () => {
         </div>
       </div>
 
-      {/* All Articles */}
+      {/* All articles grid (filtered by selected category) */}
       <div>
         <h2 className="mb-24">
           {activeCategory === 'all' ? 'All Articles' : `${categories.find(c => c.value === activeCategory)?.label} Articles`} ({filteredArticles.length})
@@ -163,6 +156,7 @@ const Articles = () => {
                     <p className="article-description">{article.description}</p>
                   )}
                   
+                  {/* External link to article */}
                   <a
                     href={article.url}
                     target="_blank"

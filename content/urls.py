@@ -1,6 +1,9 @@
 from django.urls import path
-from .views import ArticleListView
+from . import views
 
 urlpatterns = [
-    path('articles/', ArticleListView.as_view(), name='articles'),
+    # List all articles - used for browsing by category
+    path('articles/', views.ArticleListView.as_view(), name='article-list'),
+    # Get personalised article recommendations based on mood ratings and journal keywords
+    path('recommended/', views.get_recommended_articles, name='recommended-articles'),
 ]

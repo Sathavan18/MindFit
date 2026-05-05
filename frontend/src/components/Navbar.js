@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Lightbulb, Home, User, Scale, Smile, BookOpen, Wind, Book, TrendingUp, Activity } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -11,32 +12,34 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  // Navigation items with icons for each page
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
-    { path: '/profile', label: 'Profile', icon: '👤' },
-    { path: '/insights', label: 'Insights', icon: '💡' },
-    { path: '/weight-tracking', label: 'Weight', icon: '⚖️' },
-    { path: '/mood', label: 'Mood', icon: '😊' },
-    { path: '/journal', label: 'Journal', icon: '📝' },
-    { path: '/meditation', label: 'Meditation', icon: '🧘' },
-    { path: '/articles', label: 'Articles', icon: '📚' },
-    { path: '/progress', label: 'Progress', icon: '📊' },
+    { path: '/dashboard', label: 'Dashboard', icon: <Home size={20} /> },
+    { path: '/profile', label: 'Profile', icon: <User size={20} /> },
+    { path: '/insights', label: 'Insights', icon: <Lightbulb size={20} /> },
+    { path: '/weight-tracking', label: 'Weight', icon: <Scale size={20} /> },
+    { path: '/mood', label: 'Mood', icon: <Smile size={20} /> },
+    { path: '/journal', label: 'Journal', icon: <BookOpen size={20} /> },
+    { path: '/meditation', label: 'Meditation', icon: <Wind size={20} /> },
+    { path: '/articles', label: 'Articles', icon: <Book size={20} /> },
+    { path: '/progress', label: 'Progress', icon: <TrendingUp size={20} /> },
   ];
 
+  // check if the current page matches the path for active styling
   const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo/Brand */}
+        {/* Logo - clicking on it returns to dashboard*/}
         <div 
           onClick={() => navigate('/dashboard')}
           className="navbar-logo"
         >
-          💪 MindFit
+          <Activity/> MindFit
         </div>
 
-        {/* Navigation Links */}
+        {/* Main navigation links */}
         <div className="navbar-links">
           {navItems.map((item) => (
             <button
